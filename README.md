@@ -1,14 +1,14 @@
 # repo-trust
 
-**Scan a repository for malicious folder-open tasks, fake assets, and leaked credentials before you open it.**
+**GitLab patched the CVE. Your leaked token is still valid.**
 
 [![npm](https://img.shields.io/npm/v/repo-trust)](https://www.npmjs.com/package/repo-trust)
 [![CI](https://github.com/yourname/repo-trust/actions/workflows/ci.yml/badge.svg)](https://github.com/yourname/repo-trust/actions)
 [![license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-In October 2026, GhostAction/PolinRider pushed **72,026 commits** across **22,964 repositories**. **17,667** carried a fake font and a hidden `.vscode/tasks.json` task that ran a credential stealer when the folder was opened. GitHub's workflow hold did not apply — the payload ran on the developer's machine.
+`repo-trust` finds leaked GitLab tokens (`glimt-`, `glpat-`), shows the blast radius, and gives you a runbook for the fix: **revoke → rotate → purge → verify**. It also catches the hidden VS Code folder-open tasks that spread after a token is stolen. v0.1 detects and guides; automated revocation and history rewrite are next.
 
-`repo-trust` checks for that pattern, plus the other places a repo can execute code or leak credentials.
+In October 2026, GhostAction/PolinRider pushed **72,026 commits** across **22,964 repositories**. **17,667** carried a fake font and a hidden `.vscode/tasks.json` task that ran a credential stealer when the folder was opened. GitHub's workflow hold did not apply — the payload ran on the developer's machine.
 
 ```bash
 npx repo-trust scan .
@@ -18,24 +18,42 @@ No account. No telemetry. No secrets leave your machine.
 
 ---
 
+## Why GitLab leaks need a second step
+
+Patching GitLab was necessary. It did not revoke the credentials that already leaked.
+
+- **CVE-2026-85706** (CVSS 10.0) let an unauthenticated attacker read `/etc/gitlab/gitlab-secrets.json`, which decrypts CI/CD variables, deploy keys, and integration tokens. It was exploited in the wild and added to CISA KEV.
+- **CVE-2026-97229** (CVSS 10.0) was an unauthenticated RCE in the CI/CD regex compiler. Also in KEV.
+- **CVE-2026-110264** (CVSS 10.0) affected every GitLab version back to 7.0.
+- GitLab's `glimt-` incoming-email token is **account-wide**, **never expires**, can **push code and run CI**, and **bypasses IP allow-lists and 2FA**. GitLab's automatic revocation does not cover it; the only fix is a manual reset.
+- **64%** of secrets leaked in 2022 were still valid in 2026 (GitGuardian).
+
+The patch is the first step. Revocation is the fix. History cleanup is the cleanup.
+
+- Full teardown: [`docs/gitlab-glimt-teardown.md`](https://github.com/yourname/repo-trust/blob/main/docs/gitlab-glimt-teardown.md)
+- Launch post: [GitLab patched the CVE. Your leaked token is still valid.](https://github.com/yourname/repo-trust/blob/main/blog/2026-11-01-gitlab-patched-the-cve-your-token-is-still-valid.md)
+
+---
+
 ## What it catches
 
 | Check | Example |
 |---|---|
+| **Leaked GitLab credentials** | `glimt-` incoming-email tokens, `glpat-`, `glrt-`, `glcbt-`, `glptt-` |
+| **Other leaked credentials** | GitHub PATs, AWS keys, npm tokens, OpenAI/Anthropic keys, SSH keys |
 | **Hidden folder-open tasks** | `.vscode/tasks.json` with `"runOn": "folderOpen"` and `"hide": true` |
 | **Fake assets** | a `.woff2`, `.ttf`, `.png`, or `.svg` that is actually a Node.js or shell script |
 | **Git hooks** | non-sample `post-checkout`, `post-merge`, `pre-commit`, `pre-push` |
 | **Dangerous git config** | `core.fsmonitor`, `core.sshCommand`, `include.path`, `url.*.insteadOf` |
 | **Submodule commands** | `update = !command` or an `ext::` URL |
 | **CI exfiltration** | `curl … \| bash`, base64 execution, history greps, self-hosted runners |
-| **Leaked credentials** | GitLab `glimt-` / `glpat-`, GitHub PATs, AWS keys, npm tokens, AI keys, SSH keys |
 
-## Why this matters
+## The second act: the repo that owns your laptop
 
 - **17,667 repos** carried the folder-open stealer in October 2026.
 - Cleaning the repo does **not** remove the cron job the payload installs.
-- **64%** of secrets leaked in 2022 were still valid in 2026 (GitGuardian).
 - GitHub's workflow hold does **not** cover `.vscode/tasks.json`; the payload runs on the developer machine.
+- The task runs after Workspace Trust; the scanner warns before you click Trust.
 
 ## Install
 
@@ -90,16 +108,16 @@ repo-trust fix .
 ```
 repo-trust 0.1.0 — scanning /path/to/repo
 
+CRITICAL  gitlab-incoming-email-token
+  README.md:16
+  GitLab incoming email token
+  Account-wide, non-expiring token hidden inside a GitLab issue-by-email address.
+
 CRITICAL  task-folder-open-asset-script
   .vscode/tasks.json:16
   Hidden folder-open task runs a script disguised as an asset
   Task "eslint-check" runs on folder open and executes
   ./public/fonts/fa-solid-400.woff2, which is a script, not a valid font.
-
-CRITICAL  gitlab-incoming-email-token
-  README.md:16
-  GitLab incoming email token
-  Account-wide, non-expiring token hidden inside a GitLab issue-by-email address.
 
 2 findings, 2 critical. Scanned 8 files in 0.1s.
 Run `repo-trust fix` for a remediation plan.

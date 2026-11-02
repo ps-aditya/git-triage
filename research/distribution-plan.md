@@ -57,40 +57,52 @@ That is specific, verifiable, and technically impressive. "GitLens leaks" is a c
 
 ## 2. The hook: pick the story that travels
 
-You have three possible stories. Pick one as the spearhead, keep the others as follow-ups.
+You have one primary story and two supporting ones.
 
-### Hook A — "Your repo can own your laptop when you open it in VS Code" (recommended)
+### Primary — "GitLab patched the CVE. Your leaked token is still valid." (recommended)
 
 **Why it wins:**
 
+- GitLab's 2026 run is real and recent: three CVSS 10.0s, two CISA KEV entries, public exploits, **86,231 exposed hosts**, ~**13,700 still vulnerable**.
+- It is a **gap story**, not a vulnerability claim: the patch is necessary, but it does not revoke the credentials that already leaked.
+- It is concrete: CVE-2026-85706 read `/etc/gitlab/gitlab-secrets.json`, which decrypts CI/CD variables, deploy keys, and integration tokens.
+- The worst token is memorable: the `glimt-` incoming-email token is account-wide, never expires, bypasses IP allow-lists and 2FA, and can push code and run CI.
+- It leads naturally to the product: find the token, revoke it, rotate it, purge it, verify it.
+- GitLab patch-release stories have hit HN front page before (406 points), so the topic has an audience.
+
+**HN title candidates:**
+
+1. `GitLab patched the CVE. Your leaked token is still valid.`
+2. `GitLab's leak wave has a second act: the token.`
+3. `The GitLab leak isn't the CVE. It's the token that never expires.`
+4. `GitLab's glimt token is account-wide, never expires, and GitLab won't revoke it.`
+
+**Caveat to state clearly:** this is not a claim that GitLab is currently leaking tokens. The leaks are specific CVEs and exposed credentials; the product fixes the credential layer that patching leaves behind. Aikido's original `glimt-` post got only 2 points on HN, so the new angle must be the **gap + the fix**, not a recap of the disclosure.
+
+### Second act — "The stolen token becomes a developer laptop"
+
+This is the folder-open story. It is the mechanism that makes the GitLab leak spread.
+
+**Why it works:**
+
 - Universal: every developer uses VS Code.
-- Visual: a fake `.woff2` font that is actually a Node.js stealer, plus a hidden `.vscode/tasks.json` task with `"runOn": "folderOpen"`.
-- Timely: GhostAction pushed **72,026 commits across 22,964 repos**; **17,667 repos** carried the folder-open stealer; **cleaning the repo does not remove the cron job**.
-- It is a **finding**, not a product pitch. HN and press can cover it without feeling marketed to.
-- It naturally leads to the product: a free scanner + fix workflow.
+- Visual: a fake `.woff2` font that is a Node.js stealer, plus a hidden `.vscode/tasks.json` task with `"runOn": "folderOpen"`.
+- Timely: GhostAction pushed **72,026 commits across 22,964 repos**; **17,667 repos** carried the folder-open stealer; cleaning the repo does not remove the cron job.
+- It gives the launch a second post, a demo, and a reason to install the extension.
 
 **HN title candidates:**
 
 1. `A repo can run a credential stealer when you open it in VS Code`
 2. `We found 17,000 repos that run code when you open them in VS Code`
 3. `The fake font that steals your AWS keys when you open a repo`
-4. `VS Code's Workspace Trust is not enough: the folder-open malware wave`
 
-**Caveat to state clearly:** the task runs only after the workspace is trusted. The story is that "trust" is a one-click decision users make all day, and the malicious task hides in a normal-looking repo. Do not overclaim "zero-click."
+**Caveat:** the task runs only after the workspace is trusted. Do not overclaim "zero-click."
 
-### Hook B — "GitLab's leak isn't the CVE; it's the token that never expires"
+### Third — "64% of leaked secrets still work"
 
-**Why it works:** timely, concrete, and product-relevant (`glimt-` token, account-wide, non-expiring, bypasses IP allow-lists). But Aikido's original post got **2 points** on HN, so this needs a new angle:
+Broad, data-backed (GitGuardian 2026). Use it for newsletters, SEO, and the "why this matters" section. It needs original verification data to carry an HN post on its own.
 
-- `We scanned X public repos for GitLab's glimt tokens — here's what we found` (original data; ethical caveats below).
-- `GitLab's own secret detection misses the glimt token` (technical teardown + scanner).
-- `The 64% problem: leaked tokens are still valid years later` (data-driven, broader).
-
-### Hook C — "64% of leaked secrets still work"
-
-**Why it works:** broad, scary, data-backed (GitGuardian 2026). But it needs original verification data to be HN-worthy; otherwise it is a recap.
-
-**Recommendation:** lead with **Hook A**, use **Hook B** as the second post/press angle, and **Hook C** as a newsletter/SEO piece.
+**Recommendation:** lead with the **GitLab gap** story, use the **folder-open payload** as the second act/demo, and the **64%** stat as supporting evidence. The product name stays `repo-trust`; the launch tagline is GitLab-led.
 
 ---
 
@@ -109,14 +121,14 @@ Output:
 ```
 Repo Trust — scanned 412 files, 1,284 commits
 
+CRITICAL  README.md:42
+          GitLab incoming-email token (glimt-…7f3a)
+          → account-wide, non-expiring; can push code and run CI
+
 CRITICAL  .vscode/tasks.json
           hidden task "eslint-check" runs on folderOpen
           command: node ./public/fonts/fa-solid-400.woff2
           → this file is a Node.js script, not a font
-
-HIGH      README.md:42
-          GitLab incoming-email token (glimt-…7f3a)
-          → account-wide, non-expiring; can push code and run CI
 
 2 findings. Run `npx repo-trust fix` for the remediation plan.
 ```
@@ -169,7 +181,8 @@ People can clone it, run the scanner, and see the warning. This is what you link
 
 - Publish a landing page: "The 10-second safety check before you open a repo." Email capture.
 - Start posting build-in-public updates on X/LinkedIn/Bluesky: the fake font, the hidden task, the scanner output.
-- Write the technical blog post (draft): "A repo can run code when you open it in VS Code."
+- Write the main technical blog post (draft): "GitLab patched the CVE. Your leaked token is still valid."
+- Draft the second act: "A repo can run a credential stealer when you open it in VS Code."
 - Create the demo repo and a 30-second screen recording.
 - Collect 100–300 emails before launch.
 
@@ -184,7 +197,7 @@ People can clone it, run the scanner, and see the warning. This is what you link
 ### Week 0: The launch window
 
 **Day 1 (Tuesday or Wednesday):**
-- Publish the blog post at 8:00am ET.
+- Publish the GitLab post at 8:00am ET.
 - Submit to HN at 8:30–9:30am ET (title from Hook A).
 - Post to Lobsters, r/netsec (research angle, disclose affiliation), r/vscode, r/devops, r/git.
 - Post on X/Bluesky/LinkedIn with the demo video.
@@ -500,11 +513,13 @@ Thanks,
 
 ### If the product is the scanner + fix workflow
 
-> "Built and launched **Repo Trust**, a free VS Code extension + CLI that detects malicious folder-open tasks and leaked Git credentials (GitLab `glimt-` tokens, PATs, cloud keys) before they spread. **12,000+ installs**, **1,200+ GitHub stars**, Hacker News front page, Product Hunt top 5."
+> "Built and launched **Repo Trust**, a free VS Code extension + CLI that finds leaked GitLab credentials (`glimt-` incoming-email tokens, PATs, deploy keys) and drives revoke → rotate → purge → verify. **12,000+ installs**, **1,200+ GitHub stars**, Hacker News front page, Product Hunt top 5."
 
 ### If you want the "reverse-engineered" phrasing
 
-> "Reverse-engineered the **GhostAction/PolinRider VS Code folder-open loader** and **GitLab's `glimt-` incoming-email token**, then shipped an open-source scanner/fix with **12,000+ installs** and **1,200+ GitHub stars**."
+> "Reverse-engineered **GitLab's `glimt-` incoming-email token** and the **GhostAction/PolinRider VS Code folder-open loader**, then shipped an open-source scanner/fix with **12,000+ installs** and **1,200+ GitHub stars**."
+
+Use "reverse-engineered" only if you actually document the token format and reproduce the email-to-merge-request path. Otherwise, "built the remediation layer" is accurate and still strong.
 
 ### If the product is the fix layer
 
@@ -512,7 +527,7 @@ Thanks,
 
 ### What not to write
 
-- ❌ "Reversed Engineered a fix for GitLens leaks" — GitLens is not the leak; this is a factual error.
+- ❌ "Reversed Engineered a fix for **GitLens** leaks" — GitLens is not the leak. If you meant GitLab, write **GitLab**. If you meant GitLens, there is no 2026 leak; its only CVE is CVE-2023-46944.
 - ❌ "10x developer" / "revolutionary" — no.
 - ❌ Unverifiable "featured on" claims — keep screenshots/links.
 
@@ -551,13 +566,13 @@ Thanks,
 1. **Day 1:** Buy the domain, create the landing page with email capture. Copy: "Your repo can run code when you open it in VS Code. Check it in 10 seconds."
 2. **Day 2:** Create the demo repo (fake font + hidden task + fake `glimt-` token) and a 30-second screen recording.
 3. **Day 3–5:** Build the CLI scanner (`npx repo-trust scan .`) with 6 detections: folderOpen tasks, fake assets, hooks, `.git/config`, CI patterns, leaked tokens.
-4. **Day 6:** Write the blog post. Title: "A repo can run a credential stealer when you open it in VS Code."
+4. **Day 6:** Write the main post. Title: "GitLab patched the CVE. Your leaked token is still valid."
 5. **Day 7:** Ship the CLI to GitHub + npm; add README, topics, license, SECURITY.md.
 6. **Day 8:** Soft-launch to 20 developers; collect false positives.
 7. **Day 9–10:** Fix issues; add `--json` and a GitHub Action.
 8. **Day 11:** Submit to Console.dev and VSCode.Email.
 9. **Day 12:** Prepare HN/PH/press copy (use `launch-copy.md`).
-10. **Day 13:** Publish the blog post; submit to HN/Lobsters/Reddit.
+10. **Day 13:** Publish the GitLab post; submit to HN/Lobsters/Reddit.
 11. **Day 14:** Product Hunt + press outreach; measure and iterate.
 
 The extension can be built in parallel, but the CLI + story is what gets you the resume line.
@@ -566,4 +581,4 @@ The extension can be built in parallel, but the CLI + story is what gets you the
 
 ## 16. One-sentence strategy
 
-**Lead with a visceral, verifiable finding ("a repo can run code when you open it in VS Code"), give away a 10-second CLI, let HN/Lobsters/Reddit and Product Hunt drive stars and installs, then convert that attention into the full fix workflow.**
+**Lead with the GitLab gap ("GitLab patched the CVE; your leaked token is still valid"), use the VS Code folder-open payload as the second act, give away a 10-second CLI, let HN/Lobsters/Reddit and Product Hunt drive stars and installs, then convert that attention into the full remediation workflow.**

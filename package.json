@@ -1,7 +1,7 @@
 {
   "name": "repo-trust",
   "version": "0.1.0",
-  "description": "Scan a repository for malicious folder-open tasks, fake assets, and leaked credentials before you open it.",
+  "description": "Find leaked GitLab tokens and malicious VS Code folder-open tasks before they spread.",
   "type": "module",
   "bin": {
     "repo-trust": "dist/cli.js"
@@ -25,6 +25,7 @@
   },
   "keywords": [
     "security",
+    "gitlab",
     "git",
     "vscode",
     "secrets",

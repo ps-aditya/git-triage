@@ -5,6 +5,8 @@
 **Demo repo:** [link]  
 **Scanner:** [link]
 
+> This is the second act of the GitLab leak story. The first post is [GitLab patched the CVE. Your leaked token is still valid.](./2026-11-01-gitlab-patched-the-cve-your-token-is-still-valid.md). This one explains how a stolen token becomes a developer laptop.
+
 ---
 
 ## The 10-second version

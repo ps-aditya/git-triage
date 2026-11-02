@@ -1,5 +1,7 @@
 # Launch Copy — Ready to Use
 
+> **Main launch:** use §11 (the GitLab-led angle). §1 is the second act (the folder-open payload). Do not lead with §1; lead with "GitLab patched the CVE. Your leaked token is still valid."
+
 Replace `[BRACKETS]` with real values. Do not invent numbers. If a number is unknown, remove it rather than guess.
 
 ---
@@ -397,3 +399,131 @@ Keep it silent-friendly with captions; most people watch without sound.
 ## 10. One-line pitch
 
 **Repo Trust is the 10-second safety check before you open a repository — it catches hidden folder-open tasks, fake assets, malicious hooks, and leaked credentials before they run.**
+
+---
+
+## 11. GitLab-led angle (the main launch)
+
+This is the driving narrative. It is accurate, timely, and specific.
+
+### The line
+
+> **GitLab patched the CVE. Your leaked token is still valid.**
+>
+> Patching the server doesn't revoke the credentials that already leaked.
+
+### Why this works
+
+- GitLab's 2026 run is real: three CVSS 10.0s, two CISA KEV entries, public exploits, 86,000+ exposed hosts.
+- It is a **gap story**, not a vulnerability claim: the patch is necessary, but it is not the fix.
+- It leads naturally to the product: find the leaked GitLab token, revoke it, rotate it, purge it, verify it.
+- It gives you a second act: stolen token → malicious commit → VS Code folder-open stealer.
+- It is defensible on a resume: "Built the remediation layer for the 2026 GitLab credential leaks."
+
+### HN titles
+
+1. `GitLab patched the CVE. Your leaked token is still valid.`
+2. `GitLab's leak wave has a second act: the token.`
+3. `The GitLab leak isn't the CVE. It's the token that never expires.`
+4. `GitLab's glimt token is account-wide, never expires, and GitLab won't revoke it.`
+
+### HN first comment
+
+```
+Author here. GitLab shipped three CVSS 10.0 fixes in six weeks
+(CVE-2026-85706, CVE-2026-97229, CVE-2026-110264), plus several 9.9s.
+Two are in CISA KEV. Patching the server doesn't revoke the credentials
+that already leaked.
+
+CVE-2026-85706 alone let an unauthenticated attacker read
+/etc/gitlab/gitlab-secrets.json, which decrypts CI/CD variables, deploy
+keys, and integration tokens. Censys found 86,231 exposed GitLab hosts;
+ShadowServer found ~13,700 still vulnerable.
+
+The worst token is the incoming-email one: the glimt- string inside
+incoming+...-glimt-...-issue@incoming.gitlab.com is account-wide, never
+expires, and isn't checked against the sender. Change -issue to
+-merge-request, attach a .patch, and GitLab commits it as you and runs CI.
+It bypasses IP allow-lists and 2FA because it arrives by email.
+
+GitLab's automatic revocation doesn't cover this token; the only fix is a
+manual reset. I built repo-trust to find these tokens, show the blast
+radius, and walk you through the fix: revoke, rotate, purge, verify, report.
+It also catches the folder-open malware that spreads after a token is stolen.
+
+Demo (fake token): [LINK]
+Clarification: this is not a GitLab CVE; it's the credential-leak layer that
+patching doesn't fix.
+```
+
+### Product Hunt
+
+**Tagline:** `GitLab patched the CVE. Your leaked token is still valid.`
+
+**Short description:** `Repo Trust finds leaked GitLab tokens (glimt-, glpat-), shows the blast radius, and walks you through revoke → rotate → purge → verify. It also catches the hidden VS Code folder-open tasks that spread after a token is stolen. Free, local-first.`
+
+**Maker's first comment:**
+
+```
+GitLab shipped three CVSS 10.0 fixes in six weeks. Patching the server was
+necessary. It didn't revoke a single token that had already leaked.
+
+The worst one is the glimt- incoming-email token: account-wide, never
+expires, can push code and run CI, and bypasses IP allow-lists and 2FA.
+GitLab's automatic revocation doesn't cover it. The only fix is a manual
+reset.
+
+I built Repo Trust to start that layer: find the token, show what it can
+reach, and give you a runbook for revoke → rotate → purge → verify. It also
+catches the folder-open malware that spreads after a token is stolen.
+
+Free, local-first, no account. The demo uses a fake token and a harmless
+payload.
+```
+
+### X / LinkedIn
+
+```
+GitLab shipped three CVSS 10.0 fixes in six weeks.
+
+Patching the server doesn't revoke the tokens that already leaked.
+
+The worst: the glimt- incoming-email token.
+Account-wide. Never expires. Can push code and run CI.
+Bypasses IP allow-lists and 2FA.
+
+GitLab's auto-revocation doesn't cover it.
+
+I built the first step:
+npx repo-trust scan .
+then revoke → rotate → purge → verify
+
+[LINK]
+```
+
+### The three-post sequence
+
+1. **Launch:** "GitLab patched the CVE. Your leaked token is still valid."  
+   Link the GitLab post. This is the HN/press/PH hook.
+2. **Follow-up (1–2 weeks):** "The stolen token becomes a developer laptop."  
+   Link the folder-open post. This is the technical second act and the demo.
+3. **Depth (2–4 weeks):** "We fixed a leaked GitLab token in 11 minutes."  
+   A case study of the workflow. This converts attention into installs.
+
+### Resume line
+
+> "Built the remediation layer for the 2026 GitLab credential leaks: a free VS Code extension + CLI that finds leaked `glimt-`/PAT tokens and drives revoke → rotate → purge → verify. **X+ installs**, **Y+ GitHub stars**, Hacker News front page, Product Hunt top 5."
+
+Or, if you do the technical teardown:
+
+> "Reverse-engineered GitLab's `glimt-` incoming-email token and shipped an open-source scanner/fix with **X+ installs** and **Y+ GitHub stars**."
+
+Use "reverse-engineered" only if you actually document the token format and reproduce the email-to-MR path. Otherwise "built the remediation layer" is accurate and still strong.
+
+### The one thing not to write
+
+- Do **not** say "GitLab is leaking tokens" as if the platform is currently exfiltrating them. The leaks are specific CVEs and exposed credentials.
+- Do **not** claim the product patches GitLab. It fixes the credential leak that the patch leaves behind.
+- Do **not** use "GitLens." That was the typo; GitLens is a different product and has no 2026 leak.
+
+
