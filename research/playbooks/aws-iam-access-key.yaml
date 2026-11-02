@@ -1,0 +1,70 @@
+id: aws-iam-access-key
+version: 1
+provider: aws
+display_name: AWS IAM access key
+severity: critical
+
+match:
+  - regex: 'AKIA[0-9A-Z]{16}'
+  - regex: 'ASIA[0-9A-Z]{16}'
+
+mask: 'AKIA…{last4}'
+
+why: >
+  An IAM access key can call AWS APIs with the permissions of its user or role.
+  Attackers routinely use leaked keys to enumerate accounts, read S3 objects,
+  start expensive resources, and pivot into other services.
+
+blast_radius:
+  - "Every AWS API the key's IAM policy allows"
+  - "S3 buckets, databases, queues, and secrets the key can read"
+  - "Potential billing abuse (crypto mining, large instances)"
+  - "CloudTrail history may reveal what was already accessed"
+
+revoke:
+  type: cli
+  command: "aws"
+  args:
+    - "iam"
+    - "update-access-key"
+    - "--access-key-id"
+    - "{{secret}}"
+    - "--status"
+    - "Inactive"
+  steps:
+    - "Deactivate first, then delete after confirming nothing depends on it."
+    - "If you cannot use the CLI, open the IAM console → Users → Security credentials."
+  requires:
+    - "iam:UpdateAccessKey permission"
+
+verify:
+  type: cli
+  command: "aws"
+  args:
+    - "sts"
+    - "get-caller-identity"
+  expect_error: "InvalidClientTokenId"
+  instructions: "Run the old key through `aws sts get-caller-identity`; it must fail."
+
+rotate:
+  steps:
+    - "Create a new access key for the same user or, better, migrate to an IAM role/OIDC."
+    - "Update the application's environment or secret manager."
+    - "Confirm the application works, then delete the old key."
+
+purge:
+  required: true
+  paths:
+    - ".env"
+    - "docker-compose.yml"
+    - "terraform/"
+    - ".github/workflows/"
+  replacement: "***REMOVED***"
+
+prevent:
+  - "Use OIDC/short-lived credentials instead of long-lived keys."
+  - "Add a pre-commit hook and push protection."
+  - "Enable AWS CloudTrail alerts for unusual API calls."
+
+references:
+  - "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html"

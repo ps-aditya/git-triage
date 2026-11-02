@@ -1,0 +1,50 @@
+{
+  "name": "repo-trust",
+  "version": "0.1.0",
+  "description": "Scan a repository for malicious folder-open tasks, fake assets, and leaked credentials before you open it.",
+  "type": "module",
+  "bin": {
+    "repo-trust": "dist/cli.js"
+  },
+  "main": "dist/scanner.js",
+  "exports": {
+    ".": "./dist/scanner.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "tsup src/cli.ts src/scanner.ts --format esm --clean --sourcemap",
+    "dev": "tsx src/cli.ts",
+    "test": "npm run build && node --test tests/*.test.mjs",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [
+    "security",
+    "git",
+    "vscode",
+    "secrets",
+    "malware",
+    "devsecops",
+    "supply-chain",
+    "scanner"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourname/repo-trust.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yourname/repo-trust/issues"
+  },
+  "homepage": "https://github.com/yourname/repo-trust#readme",
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "tsup": "^8.0.0",
+    "tsx": "^4.0.0",
+    "typescript": "^5.6.0"
+  }
+}

@@ -1,0 +1,13 @@
+#!/usr/bin/env node
+/*
+ * DEMO ONLY — this file is harmless.
+ *
+ * It is named like a font so the scanner can demonstrate the
+ * "fake asset + folder-open task" pattern. It does not read files,
+ * does not make network requests, and does not install persistence.
+ *
+ * A real stealer would require('node:fs') and read ~/.aws/credentials,
+ * .npmrc, .git-credentials, SSH keys, and AI-tool credentials.
+ */
+console.log("[demo] This 'font' is actually a Node.js script.");
+console.log("[demo] A real payload would steal credentials here. This one does not.");

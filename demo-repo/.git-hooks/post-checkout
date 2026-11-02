@@ -1,0 +1,4 @@
+#!/bin/sh
+# DEMO ONLY — harmless.
+# A real post-checkout hook could run anything with your permissions.
+echo "[demo] post-checkout hook ran. A real hook could execute arbitrary code."
