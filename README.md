@@ -107,13 +107,13 @@ Run `repo-trust fix` for a remediation plan.
 
 ## Safe demo
 
-The [`demo-repo/`](./demo-repo) folder contains the same shape as the GhostAction attack with a **harmless** payload and fake credentials. Try it:
+The [`demo-repo/`](https://github.com/yourname/repo-trust/tree/main/demo-repo) folder contains the same shape as the GhostAction attack with a **harmless** payload and fake credentials. Try it:
 
 ```bash
 npx repo-trust scan demo-repo
 ```
 
-See [`demo-repo/SAFETY.md`](./demo-repo/SAFETY.md).
+See [`demo-repo/SAFETY.md`](https://github.com/yourname/repo-trust/blob/main/demo-repo/SAFETY.md).
 
 ## How it works
 
@@ -153,8 +153,8 @@ The full remediation workflow (revoke → rotate → purge → verify → report
 Issues and pull requests are welcome. If you find a false positive, include the file and the rule ID (redact any real secret).
 
 - [Open an issue](https://github.com/yourname/repo-trust/issues)
-- [Contributing guide](CONTRIBUTING.md)
-- [Security policy](SECURITY.md)
+- [Contributing guide](https://github.com/yourname/repo-trust/blob/main/CONTRIBUTING.md)
+- [Security policy](https://github.com/yourname/repo-trust/blob/main/SECURITY.md)
 
 ## License
 

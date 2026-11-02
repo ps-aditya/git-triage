@@ -18,6 +18,7 @@
   },
   "scripts": {
     "build": "tsup src/cli.ts src/scanner.ts --format esm --clean --sourcemap",
+    "prepublishOnly": "npm run build",
     "dev": "tsx src/cli.ts",
     "test": "npm run build && node --test tests/*.test.mjs",
     "typecheck": "tsc --noEmit"
