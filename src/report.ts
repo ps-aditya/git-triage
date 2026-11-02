@@ -40,7 +40,7 @@ function countBySeverity(findings: Finding[]): Record<Severity, number> {
 export function formatPretty(result: ScanResult): string {
   const lines: string[] = [];
   lines.push(
-    `${color.bold("repo-trust")} ${color.dim(result.version)} — scanning ${result.root}`,
+    `${color.bold("git-triage")} ${color.dim(result.version)} — scanning ${result.root}`,
   );
   lines.push("");
 
@@ -80,7 +80,7 @@ export function formatPretty(result: ScanResult): string {
   );
 
   if (result.findings.length > 0) {
-    lines.push(color.dim("Run `repo-trust fix` for a remediation plan."));
+    lines.push(color.dim("Run `git-triage fix` for a remediation plan."));
   }
 
   return lines.join("\n");
@@ -156,7 +156,7 @@ export function formatFixPlan(result: ScanResult): string {
   lines.push("   - Add custom rules for the token types you found.");
   lines.push("   - Keep secrets in a secret manager, not in the repo.");
   lines.push("");
-  lines.push(color.dim("repo-trust does not revoke credentials or rewrite history automatically."));
+  lines.push(color.dim("git-triage does not revoke credentials or rewrite history automatically."));
 
   return lines.join("\n");
 }

@@ -20,7 +20,7 @@ When a developer opened the repo in VS Code and trusted the workspace, the task 
 
 No GitHub Actions workflow was involved. GitHub's workflow hold did not apply. The payload ran on the developer's machine.
 
-This post explains the pattern, why Workspace Trust is not a security boundary, and how to check a repo before you open it. I also built a free scanner for it — `repo-trust` — because the existing secret scanners do not look at `.vscode/tasks.json`.
+This post explains the pattern, why Workspace Trust is not a security boundary, and how to check a repo before you open it. I also built a free scanner for it — **Git Triage** — because the existing secret scanners do not look at `.vscode/tasks.json`.
 
 ---
 
@@ -110,7 +110,7 @@ The realistic defense is not "never trust anything." It is:
 2. **Make the dangerous files visible.**
 3. **Assume that if you already opened it, the credentials on that machine are exposed.**
 
-That is what `repo-trust` does.
+That is what **Git Triage** does.
 
 ---
 
@@ -147,7 +147,7 @@ A server patch does not undo the token exposure. Revoking the token does not rem
 ### One command
 
 ```bash
-npx repo-trust scan .
+npx git-triage scan .
 ```
 
 The scanner checks all of the above, plus leaked tokens in the working tree. Add `--history` to scan commits. It is local-first, has no telemetry, and masks every secret in its output.
@@ -211,10 +211,10 @@ I have been building developer tools for a while, and the pattern in 2026 is cle
 
 A stolen token becomes a malicious commit. The malicious commit becomes a developer laptop. The laptop becomes the next supply chain. The existing tools stop at "we found a secret" or "we found a workflow." Nobody owns the last mile: **revoke, rotate, purge, verify, prevent.**
 
-`repo-trust` is the first piece. It is free, open source, and local-first. If it saves you from one bad repo, that is the point.
+**Git Triage** is the first piece. It is free, open source, and local-first. If it saves you from one bad repo, that is the point.
 
 - **GitHub:** [link]
-- **npm:** `npx repo-trust scan .`
+- **npm:** `npx git-triage scan .`
 - **VS Code extension:** [coming soon]
 - **Demo repo:** [link]
 
@@ -235,4 +235,4 @@ If you find a false positive or a new pattern, open an issue. If you want the fi
 
 ---
 
-*Disclosure: I built `repo-trust`. The demo repo uses a harmless fake payload and fake credentials. No live tokens were used or published.*
+*Disclosure: I built **Git Triage**. The demo repo uses a harmless fake payload and fake credentials. No live tokens were used or published.*

@@ -59,7 +59,7 @@ Happy to answer questions about the detection rules or the incident response.
 
 ### Short description
 
-`Repo Trust scans a repository before you open it — hidden folder-open tasks, fake fonts that are scripts, malicious hooks, dangerous git config, and leaked tokens. Free, local-first, no telemetry.`
+`Git Triage scans a repository before you open it — hidden folder-open tasks, fake fonts that are scripts, malicious hooks, dangerous git config, and leaked tokens. Free, local-first, no telemetry.`
 
 ### Gallery (5–7 images)
 
@@ -69,12 +69,12 @@ Happy to answer questions about the detection rules or the incident response.
 4. **The fix:** the remediation plan (revoke → rotate → purge → verify).
 5. **The proof:** incident report with timeline and residual risk.
 6. **The claim:** "17,667 repos carried this payload in October 2026" with source.
-7. **The CTA:** `npx repo-trust scan .` + GitHub link.
+7. **The CTA:** `npx git-triage scan .` + GitHub link.
 
 ### Maker's first comment
 
 ```
-Hi Product Hunt! I built Repo Trust after seeing how the GhostAction/PolinRider
+Hi Product Hunt! I built Git Triage after seeing how the GhostAction/PolinRider
 campaign worked: a repo ships a fake font and a hidden VS Code task, and when
 you open the folder, it reads your cloud keys, npm tokens, SSH keys, and AI
 tool credentials — then installs a cron job that survives cleanup.
@@ -153,7 +153,7 @@ Hi [name], just floating this once more in case it's useful. Happy to send a
 ## 4. README outline (CLI repo)
 
 ```markdown
-# Repo Trust
+# Git Triage
 
 **Scan a repo for malicious folder-open tasks, fake assets, and leaked
 credentials before you open it.**
@@ -165,7 +165,7 @@ credentials before you open it.**
 ## Try it
 
 ```bash
-npx repo-trust scan .
+npx git-triage scan .
 ```
 
 ## What it catches
@@ -197,7 +197,7 @@ prints findings. `--json` for CI.
 ## GitHub Action
 
 ```yaml
-- uses: [org]/repo-trust@v1
+- uses: [org]/git-triage@v1
 ```
 
 ## Comparison
@@ -207,7 +207,7 @@ prints findings. `--json` for CI.
 | gitleaks | No | No | Yes |
 | TruffleHog | No | No | Yes |
 | Leak Lock | No | Rewrites history | Yes |
-| Repo Trust | Yes | Yes (guided) | Yes |
+| Git Triage | Yes | Yes (guided) | Yes |
 
 ## Contributing
 
@@ -230,7 +230,7 @@ A fake font. A hidden task. Your AWS keys, npm token, SSH keys, and AI credentia
 
 **Check any repo in 10 seconds.**
 
-`npx repo-trust scan .`
+`npx git-triage scan .`
 
 [Install for VS Code] [Star on GitHub]
 
@@ -270,7 +270,7 @@ Fake font → hidden .vscode/tasks.json → reads ~/.aws, .npmrc, SSH keys, AI c
 17,667 repos carried this in October.
 
 Free scanner, 10 seconds, local-first:
-npx repo-trust scan .
+npx git-triage scan .
 
 [LINK]
 ```
@@ -289,7 +289,7 @@ assets, hooks, dangerous git config, CI exfiltration patterns, and leaked
 tokens before you trust the workspace.
 
 No account, no telemetry. Try it on a repo:
-npx repo-trust scan .
+npx git-triage scan .
 
 [LINK]
 ```
@@ -309,7 +309,7 @@ dangerous .git/config, CI exfiltration, and leaked tokens. Local-first, no
 telemetry, MIT.
 
 Demo repo with a harmless fake payload: [LINK]
-CLI: npx repo-trust scan .
+CLI: npx git-triage scan .
 Extension: [LINK]
 
 Happy to answer questions or take false-positive reports.
@@ -333,7 +333,7 @@ scanner. Link the demo repo and the write-up, not the Marketplace listing.]
 ### Console.dev (email hello@console.dev)
 
 ```
-Tool: Repo Trust
+Tool: Git Triage
 What: Scans a Git repo for malicious VS Code folder-open tasks, fake assets,
 hooks, dangerous git config, CI exfiltration patterns, and leaked credentials.
 Why: GhostAction/PolinRider used this exact pattern in 17,667 repos in October.
@@ -344,7 +344,7 @@ Link: [LINK]
 ### VSCode.Email (DM @LouisLazaris)
 
 ```
-New extension: Repo Trust — warns before a repo's hidden folder-open task runs,
+New extension: Git Triage — warns before a repo's hidden folder-open task runs,
 quarantines fake assets, and scans for leaked tokens. Free, local-first.
 Link: [LINK]
 ```
@@ -388,9 +388,9 @@ Demo: [LINK]. Write-up: [LINK].
 
 1. **0–2s:** Show a normal-looking repo: `README.md`, `public/fonts/fa-solid-400.woff2`.
 2. **2–5s:** Open `.vscode/tasks.json`; highlight `"runOn": "folderOpen"`, `"hide": true`, `node ./public/fonts/fa-solid-400.woff2`.
-3. **5–8s:** Run `npx repo-trust scan .`; show the CRITICAL finding and the "this file is a script, not a font" line.
+3. **5–8s:** Run `npx git-triage scan .`; show the CRITICAL finding and the "this file is a script, not a font" line.
 4. **8–10s:** Show the warning: "This repo contains a hidden task that runs when the folder opens." Buttons: Inspect / Quarantine / Open in Restricted Mode.
-5. **End card:** `repo-trust.dev` — "Check before you trust."
+5. **End card:** `[YOUR DOMAIN]` — "Check before you trust."
 
 Keep it silent-friendly with captions; most people watch without sound.
 
@@ -398,7 +398,7 @@ Keep it silent-friendly with captions; most people watch without sound.
 
 ## 10. One-line pitch
 
-**Repo Trust is the 10-second safety check before you open a repository — it catches hidden folder-open tasks, fake assets, malicious hooks, and leaked credentials before they run.**
+**Git Triage is the 10-second safety check before you open a repository — it catches hidden folder-open tasks, fake assets, malicious hooks, and leaked credentials before they run.**
 
 ---
 
@@ -447,7 +447,7 @@ expires, and isn't checked against the sender. Change -issue to
 It bypasses IP allow-lists and 2FA because it arrives by email.
 
 GitLab's automatic revocation doesn't cover this token; the only fix is a
-manual reset. I built repo-trust to find these tokens, show the blast
+manual reset. I built Git Triage to find these tokens, show the blast
 radius, and walk you through the fix: revoke, rotate, purge, verify, report.
 It also catches the folder-open malware that spreads after a token is stolen.
 
@@ -460,7 +460,7 @@ patching doesn't fix.
 
 **Tagline:** `GitLab patched the CVE. Your leaked token is still valid.`
 
-**Short description:** `Repo Trust finds leaked GitLab tokens (glimt-, glpat-), shows the blast radius, and walks you through revoke → rotate → purge → verify. It also catches the hidden VS Code folder-open tasks that spread after a token is stolen. Free, local-first.`
+**Short description:** `Git Triage finds leaked GitLab tokens (glimt-, glpat-), shows the blast radius, and walks you through revoke → rotate → purge → verify. It also catches the hidden VS Code folder-open tasks that spread after a token is stolen. Free, local-first.`
 
 **Maker's first comment:**
 
@@ -473,7 +473,7 @@ expires, can push code and run CI, and bypasses IP allow-lists and 2FA.
 GitLab's automatic revocation doesn't cover it. The only fix is a manual
 reset.
 
-I built Repo Trust to start that layer: find the token, show what it can
+I built Git Triage to start that layer: find the token, show what it can
 reach, and give you a runbook for revoke → rotate → purge → verify. It also
 catches the folder-open malware that spreads after a token is stolen.
 
@@ -495,7 +495,7 @@ Bypasses IP allow-lists and 2FA.
 GitLab's auto-revocation doesn't cover it.
 
 I built the first step:
-npx repo-trust scan .
+npx git-triage scan .
 then revoke → rotate → purge → verify
 
 [LINK]

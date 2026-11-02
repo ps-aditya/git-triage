@@ -3,7 +3,8 @@ dist/
 *.log
 .DS_Store
 coverage/
-.leakfix/
+.git-triage/
+demo-repo/.vscode/tasks.json
 
 *.tgz
 .env

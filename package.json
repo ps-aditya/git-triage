@@ -1,10 +1,10 @@
 {
-  "name": "repo-trust",
+  "name": "git-triage",
   "version": "0.1.0",
-  "description": "Find leaked GitLab tokens and malicious VS Code folder-open tasks before they spread.",
+  "description": "Incident triage for leaked GitLab credentials and malicious VS Code folder-open tasks.",
   "type": "module",
   "bin": {
-    "repo-trust": "dist/cli.js"
+    "git-triage": "dist/cli.js"
   },
   "main": "dist/scanner.js",
   "exports": {
@@ -28,6 +28,8 @@
     "gitlab",
     "git",
     "vscode",
+    "triage",
+    "incident-response",
     "secrets",
     "malware",
     "devsecops",
@@ -37,12 +39,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/yourname/repo-trust.git"
+    "url": "https://github.com/yourname/git-triage.git"
   },
   "bugs": {
-    "url": "https://github.com/yourname/repo-trust/issues"
+    "url": "https://github.com/yourname/git-triage/issues"
   },
-  "homepage": "https://github.com/yourname/repo-trust#readme",
+  "homepage": "https://github.com/yourname/git-triage#readme",
   "devDependencies": {
     "@types/node": "^24.0.0",
     "tsup": "^8.0.0",

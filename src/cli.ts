@@ -25,15 +25,15 @@ interface Args {
   version: boolean;
 }
 
-const HELP = `repo-trust ${VERSION}
+const HELP = `git-triage ${VERSION}
 
-Scan a repository for malicious folder-open tasks, fake assets, and leaked
-credentials before you open it.
+Incident triage for leaked GitLab credentials and malicious VS Code
+folder-open tasks.
 
 Usage:
-  repo-trust scan [path] [options]
-  repo-trust fix [path]
-  repo-trust rules
+  git-triage scan [path] [options]
+  git-triage fix [path]
+  git-triage rules
 
 Options:
   --json                 Machine-readable output
@@ -46,9 +46,9 @@ Options:
   -v, --version          Show the version
 
 Examples:
-  npx repo-trust scan .
-  npx repo-trust scan . --history --json
-  npx repo-trust fix .
+  npx git-triage scan .
+  npx git-triage scan . --history --json
+  npx git-triage fix .
 `;
 
 function isSeverity(value: string): value is Severity {
@@ -194,6 +194,6 @@ async function main(): Promise<void> {
 
 main().catch((error: unknown) => {
   const message = error instanceof Error ? error.message : String(error);
-  console.error(`repo-trust: ${message}`);
+  console.error(`git-triage: ${message}`);
   process.exitCode = 2;
 });

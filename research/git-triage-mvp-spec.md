@@ -1,15 +1,15 @@
-# LeakFix — MVP Product Spec
+# Git Triage — MVP Product Spec
 
 **Version:** 0.1 (build spec)  
 **Date:** 1 November 2026  
 **Product:** VS Code extension for fixing leaked Git credentials  
-**Positioning:** *Detection tools tell you what leaked. LeakFix fixes it.*
+**Positioning:** *Detection tools tell you what leaked. Git Triage fixes it.*
 
 ---
 
 ## 1. Product statement
 
-LeakFix is a local-first VS Code extension that takes a leaked credential from **finding** to **verified fix**:
+Git Triage is a local-first VS Code extension that takes a leaked credential from **finding** to **verified fix**:
 
 > **Contain → Rotate → Purge → Verify → Prevent → Prove**
 
@@ -58,7 +58,7 @@ It does not try to replace gitleaks, TruffleHog, GitLab Secret Detection, or Git
 
 ## 4. Core user journey
 
-1. User opens a repo. LeakFix runs a quick working-tree scan (and optionally a history scan).
+1. User opens a repo. Git Triage runs a quick working-tree scan (and optionally a history scan).
 2. A finding appears in the sidebar: **"GitLab incoming email token — CRITICAL — still live."**
 3. User clicks **Fix this leak**.
 4. Wizard opens:
@@ -93,7 +93,7 @@ It does not try to replace gitleaks, TruffleHog, GitLab Secret Detection, or Git
 - Safety checkpoint + restore.
 - Verification (provider API + ref scan).
 - Markdown incident report (PDF optional via webview print).
-- Repo Trust Gate (basic): `.vscode/tasks.json`, hooks, `.git/config`, fake assets, CI patterns.
+- Trust Gate (basic): `.vscode/tasks.json`, hooks, `.git/config`, fake assets, CI patterns.
 
 ### Out of scope (explicitly)
 
@@ -211,8 +211,8 @@ interface IncidentStep {
 interface Checkpoint {
   id: string;
   createdAt: string;
-  bundlePath: string;         // .git/leakfix/backups/<ts>.bundle
-  ref: string;                // refs/leakfix/backup/<ts>
+  bundlePath: string;         // .git/Git Triage/backups/<ts>.bundle
+  ref: string;                // refs/Git Triage/backup/<ts>
   head: string;
   refs: Record<string, string>;
 }
@@ -220,7 +220,7 @@ interface Checkpoint {
 
 ### Storage
 
-- Workspace-local: `<repo>/.git/leakfix/` (never in the worktree, never committed).
+- Workspace-local: `<repo>/.git/Git Triage/` (never in the worktree, never committed).
   - `incidents/<id>.json`
   - `backups/<ts>.bundle`
   - `reports/<id>.md`
@@ -267,7 +267,7 @@ const RULES = [
 ];
 ```
 
-> False positives: show a "Not a secret / Ignore" action that writes to `.git/leakfix/ignore` (not `.gitignore`), with a reason.
+> False positives: show a "Not a secret / Ignore" action that writes to `.git/Git Triage/ignore` (not `.gitignore`), with a reason.
 
 ---
 
@@ -439,7 +439,7 @@ references:
 
 - Built-in playbooks ship in the VSIX.
 - Optional signed rule-pack updates (phase 2).
-- User can add local playbooks in `.leakfix/playbooks/` (workspace) or global storage.
+- User can add local playbooks in `.Git Triage/playbooks/` (workspace) or global storage.
 - Validate against a JSON schema; reject unknown fields; never execute arbitrary commands from a playbook unless the playbook is signed or the user explicitly approves.
 
 > **Security note:** a playbook is executable knowledge. Treat third-party playbooks as code. For MVP, only ship built-in, reviewed playbooks; allow user-authored local playbooks with a warning and no auto-run.
@@ -457,7 +457,7 @@ references:
    - `Playbooks`
    - `Settings`
 3. **Webview wizard** — the main experience, opened in an editor tab.
-4. **Status bar** — "LeakFix: 2 live secrets" / "Incident in progress."
+4. **Status bar** — "Git Triage: 2 live secrets" / "Incident in progress."
 5. **Output channel** — redacted command/API log.
 
 ### Wizard screens
@@ -497,8 +497,8 @@ references:
   - "These files contain the secret: README.md (12 commits), .gitlab-ci.yml (1 commit)."
   - "Unpushed commits: none" (or a blocking list).
 - **Checkpoint** card:
-  - "Backup bundle: .git/leakfix/backups/2026-11-01T14-22-01.bundle"
-  - "Backup ref: refs/leakfix/backup/2026-11-01T14-22-01"
+  - "Backup bundle: .git/Git Triage/backups/2026-11-01T14-22-01.bundle"
+  - "Backup ref: refs/Git Triage/backup/2026-11-01T14-22-01"
   - Button: **Create checkpoint** (required).
 - **Script preview** (read-only, monospace) with the exact commands.
 - Typed confirmation: type `PURGE` (or the branch name).
@@ -524,7 +524,7 @@ references:
 **Screen 7 — Report**
 - Preview Markdown.
 - Buttons: **Export Markdown**, **Print/PDF**, **Copy summary**.
-- Report path: `.git/leakfix/reports/INC-….md`.
+- Report path: `.git/Git Triage/reports/INC-….md`.
 
 ### Visual rules
 
@@ -541,26 +541,26 @@ references:
 
 ```bash
 # 1. Capture all refs
-git for-each-ref --format='%(refname) %(objectname)' > .git/leakfix/backups/<ts>/refs.txt
+git for-each-ref --format='%(refname) %(objectname)' > .git/Git Triage/backups/<ts>/refs.txt
 
 # 2. Bundle everything (all refs, including remote-tracking)
-git bundle create .git/leakfix/backups/<ts>.bundle --all
+git bundle create .git/Git Triage/backups/<ts>.bundle --all
 
 # 3. Create a restore ref
-git update-ref refs/leakfix/backup/<ts> HEAD
+git update-ref refs/Git Triage/backup/<ts> HEAD
 
 # 4. Save reflog and config (for forensics)
-cp -r .git/logs .git/leakfix/backups/<ts>/logs
-cp .git/config .git/leakfix/backups/<ts>/config
+cp -r .git/logs .git/Git Triage/backups/<ts>/logs
+cp .git/config .git/Git Triage/backups/<ts>/config
 ```
 
 - Do not expire the reflog until the purge is verified and the user confirms cleanup.
 - Keep the bundle until the user deletes it; default retention 30 days.
 - Restore:
   ```bash
-  git reset --hard refs/leakfix/backup/<ts>
+  git reset --hard refs/Git Triage/backup/<ts>
   # or, if the ref is gone:
-  git bundle unbundle .git/leakfix/backups/<ts>.bundle
+  git bundle unbundle .git/Git Triage/backups/<ts>.bundle
   ```
 - Warn: restoring after a force-push requires another force-push; never do it automatically.
 
@@ -580,14 +580,14 @@ done
 
 # Prepare replacement rules (literal or regex)
 # Format: literal==>replacement  or  regex:pattern==>replacement
-cat > .git/leakfix/tmp/replacements.txt <<'EOF'
+cat > .git/Git Triage/tmp/replacements.txt <<'EOF'
 glimt-ABC123==>***REMOVED***
 regex:incoming\+[^@\s]+-glimt-[A-Za-z0-9_-]+-(issue|merge-request)@incoming\.gitlab\.com==>***REMOVED***
 EOF
-chmod 600 .git/leakfix/tmp/replacements.txt
+chmod 600 .git/Git Triage/tmp/replacements.txt
 
 # Rewrite all refs
-git filter-repo --force --replace-text .git/leakfix/tmp/replacements.txt
+git filter-repo --force --replace-text .git/Git Triage/tmp/replacements.txt
 
 # filter-repo removes origin; re-add it
 git remote add origin <original-url>
@@ -673,7 +673,7 @@ git gc --prune=now --aggressive
 ### Template
 
 ```markdown
-# LeakFix Incident Report — INC-2026-11-01-001
+# Git Triage Incident Report — INC-2026-11-01-001
 
 **Repository:** example/app  
 **Remote:** gitlab.com/example/app  
@@ -734,7 +734,7 @@ at 14:40Z; all remote refs were verified clean at 14:52Z.
 
 ---
 
-## 14. Repo Trust Gate (MVP-lite)
+## 14. Trust Gate (MVP-lite)
 
 ### Checks
 
@@ -755,7 +755,7 @@ On folder open, before tasks run:
 > `public/fonts/fa-solid-400.woff2` is a Node.js script. It can read your AWS, npm, GitHub, SSH, and AI-tool credentials.
 > [Inspect] [Quarantine file] [Disable task] [Open in Restricted Mode]
 
-- Do not auto-delete files; quarantine by renaming to `.leakfix-quarantine` and record hashes.
+- Do not auto-delete files; quarantine by renaming to `.Git Triage-quarantine` and record hashes.
 - Do not auto-run any repo command.
 - If the user opens in Restricted Mode, still show the warning (tasks won't run, but the repo is still suspect).
 
@@ -769,44 +769,44 @@ On folder open, before tasks run:
 
 | Command | Purpose |
 |---|---|
-| `leakfix.scan` | Scan working tree + history |
-| `leakfix.import` | Import SARIF/JSON |
-| `leakfix.fix` | Start incident for a finding |
-| `leakfix.revoke` | Run the revoke step |
-| `leakfix.rotate` | Show rotation checklist |
-| `leakfix.purge.preview` | Generate the purge plan + script |
-| `leakfix.purge.run` | Run the purge after confirmation |
-| `leakfix.verify` | Verify provider + refs |
-| `leakfix.report.export` | Export the incident report |
-| `leakfix.checkpoint.create` | Create a manual checkpoint |
-| `leakfix.checkpoint.restore` | Restore a checkpoint |
-| `leakfix.trustGate.scan` | Run the repo trust checks |
-| `leakfix.trustGate.quarantine` | Quarantine a suspicious file |
+| `Git Triage.scan` | Scan working tree + history |
+| `Git Triage.import` | Import SARIF/JSON |
+| `Git Triage.fix` | Start incident for a finding |
+| `Git Triage.revoke` | Run the revoke step |
+| `Git Triage.rotate` | Show rotation checklist |
+| `Git Triage.purge.preview` | Generate the purge plan + script |
+| `Git Triage.purge.run` | Run the purge after confirmation |
+| `Git Triage.verify` | Verify provider + refs |
+| `Git Triage.report.export` | Export the incident report |
+| `Git Triage.checkpoint.create` | Create a manual checkpoint |
+| `Git Triage.checkpoint.restore` | Restore a checkpoint |
+| `Git Triage.trustGate.scan` | Run the Git Triage checks |
+| `Git Triage.trustGate.quarantine` | Quarantine a suspicious file |
 
 ### Settings
 
 ```jsonc
 {
-  "leakfix.scanner.engine": "gitleaks",        // "gitleaks" | "builtin" | "external"
-  "leakfix.scanner.path": "",                   // optional external binary
-  "leakfix.scanner.maxHistoryMB": 500,
-  "leakfix.scanner.exclude": ["**/node_modules/**", "**/dist/**"],
-  "leakfix.purge.tool": "filter-repo",          // "filter-repo" | "bfg" | "filter-branch"
-  "leakfix.purge.requireCheckpoint": true,
-  "leakfix.backup.retentionDays": 30,
-  "leakfix.providers.gitlab.baseUrl": "https://gitlab.com",
-  "leakfix.providers.gitlab.token": "",         // stored in SecretStorage, not settings
-  "leakfix.providers.github.token": "",
-  "leakfix.telemetry.enabled": false,
-  "leakfix.trustGate.enabled": true,
-  "leakfix.trustGate.blockOnFolderOpen": true
+  "Git Triage.scanner.engine": "gitleaks",        // "gitleaks" | "builtin" | "external"
+  "Git Triage.scanner.path": "",                   // optional external binary
+  "Git Triage.scanner.maxHistoryMB": 500,
+  "Git Triage.scanner.exclude": ["**/node_modules/**", "**/dist/**"],
+  "Git Triage.purge.tool": "filter-repo",          // "filter-repo" | "bfg" | "filter-branch"
+  "Git Triage.purge.requireCheckpoint": true,
+  "Git Triage.backup.retentionDays": 30,
+  "Git Triage.providers.gitlab.baseUrl": "https://gitlab.com",
+  "Git Triage.providers.gitlab.token": "",         // stored in SecretStorage, not settings
+  "Git Triage.providers.github.token": "",
+  "Git Triage.telemetry.enabled": false,
+  "Git Triage.trustGate.enabled": true,
+  "Git Triage.trustGate.blockOnFolderOpen": true
 }
 ```
 
 ### Security
 
 - Provider tokens → `context.secrets` (SecretStorage).
-- Workspace settings must not be able to point provider tokens at an attacker-controlled base URL without a warning. Treat `leakfix.providers.*.baseUrl` as `machine`-scoped or require confirmation.
+- Workspace settings must not be able to point provider tokens at an attacker-controlled base URL without a warning. Treat `Git Triage.providers.*.baseUrl` as `machine`-scoped or require confirmation.
 - No telemetry by default. If enabled, send only counts and rule IDs — never secrets, file contents, repo names, or remote URLs.
 - Redact logs: replace any matched secret with `[REDACTED:<rule>:<hash8>]`.
 - CSP in webview: `default-src 'none'; style-src 'unsafe-inline'; script-src 'nonce-…'; img-src data:`.
@@ -875,7 +875,7 @@ One developer (you) + part-time design/security review. If solo, cut Trust Gate 
 
 ## 18. Launch checklist
 
-- [ ] Name/trademark check: LeakFix / Git Triage (Marketplace, Open VSX, USPTO, npm, GitHub).
+- [ ] Name/trademark check: Git Triage / Git Triage (Marketplace, Open VSX, USPTO, npm, GitHub).
 - [ ] Unique icon: no orange Git diamond, no GitLab fox.
 - [ ] Clear "unofficial" wording; no provider logos.
 - [ ] README with a 60-second demo GIF: leak → revoke → purge → verify → report.

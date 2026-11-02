@@ -1,17 +1,17 @@
-# repo-trust
+# Git Triage
 
 **GitLab patched the CVE. Your leaked token is still valid.**
 
-[![npm](https://img.shields.io/npm/v/repo-trust)](https://www.npmjs.com/package/repo-trust)
-[![CI](https://github.com/yourname/repo-trust/actions/workflows/ci.yml/badge.svg)](https://github.com/yourname/repo-trust/actions)
+[![npm](https://img.shields.io/npm/v/git-triage)](https://www.npmjs.com/package/git-triage)
+[![CI](https://github.com/yourname/git-triage/actions/workflows/ci.yml/badge.svg)](https://github.com/yourname/git-triage/actions)
 [![license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-`repo-trust` finds leaked GitLab tokens (`glimt-`, `glpat-`), shows the blast radius, and gives you a runbook for the fix: **revoke → rotate → purge → verify**. It also catches the hidden VS Code folder-open tasks that spread after a token is stolen. v0.1 detects and guides; automated revocation and history rewrite are next.
+**Git Triage** finds leaked GitLab tokens (`glimt-`, `glpat-`), shows the blast radius, and gives you a runbook for the fix: **revoke → rotate → purge → verify**. It also catches the hidden VS Code folder-open tasks that spread after a token is stolen. v0.1 detects and guides; automated revocation and history rewrite are next.
 
 In October 2026, GhostAction/PolinRider pushed **72,026 commits** across **22,964 repositories**. **17,667** carried a fake font and a hidden `.vscode/tasks.json` task that ran a credential stealer when the folder was opened. GitHub's workflow hold did not apply — the payload ran on the developer's machine.
 
 ```bash
-npx repo-trust scan .
+npx git-triage scan .
 ```
 
 No account. No telemetry. No secrets leave your machine.
@@ -30,8 +30,8 @@ Patching GitLab was necessary. It did not revoke the credentials that already le
 
 The patch is the first step. Revocation is the fix. History cleanup is the cleanup.
 
-- Full teardown: [`docs/gitlab-glimt-teardown.md`](https://github.com/yourname/repo-trust/blob/main/docs/gitlab-glimt-teardown.md)
-- Launch post: [GitLab patched the CVE. Your leaked token is still valid.](https://github.com/yourname/repo-trust/blob/main/blog/2026-11-01-gitlab-patched-the-cve-your-token-is-still-valid.md)
+- Full teardown: [`docs/gitlab-glimt-teardown.md`](https://github.com/yourname/git-triage/blob/main/docs/gitlab-glimt-teardown.md)
+- Launch post: [GitLab patched the CVE. Your leaked token is still valid.](https://github.com/yourname/git-triage/blob/main/blog/2026-11-01-gitlab-patched-the-cve-your-token-is-still-valid.md)
 
 ---
 
@@ -59,11 +59,11 @@ The patch is the first step. Revocation is the fix. History cleanup is the clean
 
 ```bash
 # one-off
-npx repo-trust scan .
+npx git-triage scan .
 
 # or install it
-npm install -g repo-trust
-repo-trust scan .
+npm install -g git-triage
+git-triage scan .
 ```
 
 Requires Node.js 20+.
@@ -71,9 +71,9 @@ Requires Node.js 20+.
 ## Usage
 
 ```bash
-repo-trust scan [path] [options]
-repo-trust fix [path]
-repo-trust rules
+git-triage scan [path] [options]
+git-triage fix [path]
+git-triage rules
 ```
 
 ### Options
@@ -91,22 +91,22 @@ repo-trust rules
 
 ```bash
 # scan the current repo
-repo-trust scan .
+git-triage scan .
 
 # scan the last 2,000 commits and emit JSON
-repo-trust scan . --history --max-commits 2000 --json
+git-triage scan . --history --max-commits 2000 --json
 
 # fail CI on any high or critical finding
-repo-trust scan . --ci
+git-triage scan . --ci
 
 # print a remediation plan
-repo-trust fix .
+git-triage fix .
 ```
 
 ## Example output
 
 ```
-repo-trust 0.1.0 — scanning /path/to/repo
+git-triage 0.1.0 — scanning /path/to/repo
 
 CRITICAL  gitlab-incoming-email-token
   README.md:16
@@ -120,18 +120,28 @@ CRITICAL  task-folder-open-asset-script
   ./public/fonts/fa-solid-400.woff2, which is a script, not a valid font.
 
 2 findings, 2 critical. Scanned 8 files in 0.1s.
-Run `repo-trust fix` for a remediation plan.
+Run `git-triage fix` for a remediation plan.
 ```
 
 ## Safe demo
 
-The [`demo-repo/`](https://github.com/yourname/repo-trust/tree/main/demo-repo) folder contains the same shape as the GhostAction attack with a **harmless** payload and fake credentials. Try it:
+The [`demo-repo/`](https://github.com/yourname/git-triage/tree/main/demo-repo) folder contains the same shape as the GhostAction attack with a **harmless** payload and fake credentials. The task ships as `.vscode/tasks.json.example` so antivirus does not quarantine it. Enable it first:
 
-```bash
-npx repo-trust scan demo-repo
+```powershell
+cd demo-repo
+pwsh ./enable-demo.ps1
+cd ..
+npx git-triage scan demo-repo
 ```
 
-See [`demo-repo/SAFETY.md`](https://github.com/yourname/repo-trust/blob/main/demo-repo/SAFETY.md).
+Disable it when you are done:
+
+```powershell
+cd demo-repo
+pwsh ./disable-demo.ps1
+```
+
+See [`demo-repo/SAFETY.md`](https://github.com/yourname/git-triage/blob/main/demo-repo/SAFETY.md).
 
 ## How it works
 
@@ -153,7 +163,7 @@ The full remediation workflow (revoke → rotate → purge → verify → report
 
 | Tool | Detects folder-open malware | Detects secrets | Fixes / rewrites | Local-first |
 |---|---|---|---|---|
-| **repo-trust** | Yes | Yes | Guidance (v0.1) | Yes |
+| **Git Triage** | Yes | Yes | Guidance (v0.1) | Yes |
 | gitleaks | No | Yes | No | Yes |
 | TruffleHog | No | Yes | No | Yes |
 | Leak Lock | No | Yes | History rewrite | Yes |
@@ -162,17 +172,17 @@ The full remediation workflow (revoke → rotate → purge → verify → report
 ## CI
 
 ```yaml
-- name: repo-trust
-  run: npx repo-trust scan . --ci
+- name: git-triage
+  run: npx git-triage scan . --ci
 ```
 
 ## Contributing
 
 Issues and pull requests are welcome. If you find a false positive, include the file and the rule ID (redact any real secret).
 
-- [Open an issue](https://github.com/yourname/repo-trust/issues)
-- [Contributing guide](https://github.com/yourname/repo-trust/blob/main/CONTRIBUTING.md)
-- [Security policy](https://github.com/yourname/repo-trust/blob/main/SECURITY.md)
+- [Open an issue](https://github.com/yourname/git-triage/issues)
+- [Contributing guide](https://github.com/yourname/git-triage/blob/main/CONTRIBUTING.md)
+- [Security policy](https://github.com/yourname/git-triage/blob/main/SECURITY.md)
 
 ## License
 

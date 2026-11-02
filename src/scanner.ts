@@ -68,7 +68,7 @@ export async function scan(options: ScanOptions): Promise<ScanResult> {
   const unique = dedupe(findings).sort(compareFindings);
 
   return {
-    tool: "repo-trust",
+    tool: "git-triage",
     version: VERSION,
     root,
     findings: unique,

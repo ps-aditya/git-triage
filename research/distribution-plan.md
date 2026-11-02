@@ -102,7 +102,7 @@ This is the folder-open story. It is the mechanism that makes the GitLab leak sp
 
 Broad, data-backed (GitGuardian 2026). Use it for newsletters, SEO, and the "why this matters" section. It needs original verification data to carry an HN post on its own.
 
-**Recommendation:** lead with the **GitLab gap** story, use the **folder-open payload** as the second act/demo, and the **64%** stat as supporting evidence. The product name stays `repo-trust`; the launch tagline is GitLab-led.
+**Recommendation:** lead with the **GitLab gap** story, use the **folder-open payload** as the second act/demo, and the **64%** stat as supporting evidence. The product name is **Git Triage** (`git-triage` on npm); the launch tagline is GitLab-led.
 
 ---
 
@@ -113,13 +113,13 @@ Do **not** launch the full incident-response wizard first. Launch a **10-second 
 ### Free CLI (the star magnet)
 
 ```bash
-npx repo-trust scan .
+npx git-triage scan .
 ```
 
 Output:
 
 ```
-Repo Trust — scanned 412 files, 1,284 commits
+Git Triage — scanned 412 files, 1,284 commits
 
 CRITICAL  README.md:42
           GitLab incoming-email token (glimt-…7f3a)
@@ -130,11 +130,11 @@ CRITICAL  .vscode/tasks.json
           command: node ./public/fonts/fa-solid-400.woff2
           → this file is a Node.js script, not a font
 
-2 findings. Run `npx repo-trust fix` for the remediation plan.
+2 findings. Run `npx git-triage fix` for the remediation plan.
 ```
 
 - One command, no config, no account, no telemetry.
-- Works in CI (`repo-trust scan --ci`).
+- Works in CI (`git-triage scan --ci`).
 - The README is the star magnet; the extension is the install magnet.
 
 ### VS Code extension (the install magnet)
@@ -162,7 +162,7 @@ People can clone it, run the scanner, and see the warning. This is what you link
 
 | Asset | Purpose | Effort |
 |---|---|---|
-| CLI repo (`repo-trust`) | GitHub stars, HN/Lobsters link, CI users | 3–5 days |
+| CLI repo (`git-triage`) | GitHub stars, HN/Lobsters link, CI users | 3–5 days |
 | VS Code extension | Installs, Marketplace reviews | 1–2 weeks |
 | Demo repo | Shareable proof, safe test | 1 day |
 | Blog post | HN/press hook; SEO | 1–2 days |
@@ -223,7 +223,7 @@ People can clone it, run the scanner, and see the warning. This is what you link
 
 ### Week +3 to +8: SEO and community
 
-- Comparison pages: "Repo Trust vs gitleaks", "Repo Trust vs TruffleHog", "Repo Trust vs Leak Lock".
+- Comparison pages: "Git Triage vs gitleaks", "Git Triage vs TruffleHog", "Git Triage vs Leak Lock".
 - "How to remove a secret from Git history" guide (SEO).
 - "GitLab glimt token: what it is and how to fix it" guide (SEO).
 - Conference/meetup lightning talk.
@@ -387,7 +387,7 @@ Thanks,
 
 ### The repo is the product
 
-- Name: `repo-trust` (or `leakfix`), short and searchable.
+- Name: `git-triage`, short and searchable.
 - Description: "Scan a repo for malicious folder-open tasks, fake assets, and leaked credentials before you open it."
 - Topics: `security`, `vscode`, `vscode-extension`, `git`, `secrets`, `devsecops`, `supply-chain`, `malware`, `scanner`.
 - License: MIT (or Apache-2.0).
@@ -398,7 +398,7 @@ Thanks,
 1. Badges: npm version, downloads, CI, license, stars.
 2. One-liner.
 3. Demo GIF (terminal scan of the malicious fixture).
-4. Install: `npx repo-trust scan .`
+4. Install: `npx git-triage scan .`
 5. "What it catches" table.
 6. "Why this matters" with 3 sourced stats.
 7. "VS Code extension" link.
@@ -428,7 +428,7 @@ Thanks,
 
 ### Listing
 
-- **Name:** `Repo Trust — VS Code Malware & Secret Scanner` (keywords in the name).
+- **Name:** `Git Triage — VS Code Malware & Secret Scanner` (keywords in the name).
 - **Short description:** "Stops malicious folder-open tasks and finds leaked credentials before they spread."
 - **Categories:** Security, Other.
 - **Tags:** security, git, secrets, malware, devsecops, supply-chain.
@@ -513,7 +513,7 @@ Thanks,
 
 ### If the product is the scanner + fix workflow
 
-> "Built and launched **Repo Trust**, a free VS Code extension + CLI that finds leaked GitLab credentials (`glimt-` incoming-email tokens, PATs, deploy keys) and drives revoke → rotate → purge → verify. **12,000+ installs**, **1,200+ GitHub stars**, Hacker News front page, Product Hunt top 5."
+> "Built and launched **Git Triage**, a free VS Code extension + CLI that finds leaked GitLab credentials (`glimt-` incoming-email tokens, PATs, deploy keys) and drives revoke → rotate → purge → verify. **12,000+ installs**, **1,200+ GitHub stars**, Hacker News front page, Product Hunt top 5."
 
 ### If you want the "reverse-engineered" phrasing
 
@@ -565,7 +565,7 @@ Use "reverse-engineered" only if you actually document the token format and repr
 
 1. **Day 1:** Buy the domain, create the landing page with email capture. Copy: "Your repo can run code when you open it in VS Code. Check it in 10 seconds."
 2. **Day 2:** Create the demo repo (fake font + hidden task + fake `glimt-` token) and a 30-second screen recording.
-3. **Day 3–5:** Build the CLI scanner (`npx repo-trust scan .`) with 6 detections: folderOpen tasks, fake assets, hooks, `.git/config`, CI patterns, leaked tokens.
+3. **Day 3–5:** Build the CLI scanner (`npx git-triage scan .`) with 6 detections: folderOpen tasks, fake assets, hooks, `.git/config`, CI patterns, leaked tokens.
 4. **Day 6:** Write the main post. Title: "GitLab patched the CVE. Your leaked token is still valid."
 5. **Day 7:** Ship the CLI to GitHub + npm; add README, topics, license, SECURITY.md.
 6. **Day 8:** Soft-launch to 20 developers; collect false positives.

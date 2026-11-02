@@ -184,7 +184,7 @@ Not "Git security scanner." Not "Git undo." **The fix button for the GitLab leak
 **Module A — Leak Fix (core, MVP)**  
 Import a finding from any scanner (gitleaks, TruffleHog, Betterleaks, GitLab/GitHub SARIF, GitGuardian) or detect it locally. Then run the six-step fix workflow with a safety checkpoint, dry runs, and an audit report.
 
-**Module B — Repo Trust Gate (differentiator, phase 2)**  
+**Module B — Trust Gate (differentiator, phase 2)**  
 When a repo is opened, inspect the files that execute before/around the editor:
 
 - `.vscode/tasks.json`: `runOn: folderOpen`, hidden tasks, `shell` commands invoking `node`/`powershell`/`curl`, suspicious labels (`eslint-check`), `"hide": true`.
@@ -266,7 +266,7 @@ Warn before the task runs, offer "open in Restricted Mode," quarantine the files
 - Team incident timeline, approvals, and SSO.
 - More providers (GCP, Azure, Stripe, Slack, npm, PyPI, Docker Hub, Hugging Face, OpenRouter).
 - CI integrations (GitLab CI component, GitHub Action) that run the same playbooks.
-- Repo Trust Gate with a rules feed and IOC updates.
+- Trust Gate with a rules feed and IOC updates.
 - "GitLab instance posture" read-only check via API: version vs. known CVEs, exposed `glimt-` addresses, CI variables older than N days. (Do not become a server scanner; keep it as a lead magnet.)
 
 ---
@@ -364,14 +364,13 @@ A free, client-side self-check that looks for:
 Avoid: Git Blend, Git Safety Net (taken), Git Time Machine (taken), Git Rewind/Git Undo (likely crowded; verify).
 
 Candidate directions (check Marketplace, Open VSX, USPTO, npm, GitHub):
-- **LeakFix** — clear, verb-led, says the outcome.
-- **Git Triage** — incident-response framing.
+- **Git Triage** — incident-response framing; clear, verb-led, says the outcome.
 - **Repo Rescue** — broader than secrets; good for the trust gate too.
 - **Contain** — strong security word; may be crowded.
 - **Git Aftermath** — memorable, but maybe too dramatic.
 - **FixSecrets** — literal, SEO-friendly.
 
-Recommendation: **LeakFix** or **Git Triage** if available; use a distinct icon (no orange Git diamond, no GitLab fox).
+Recommendation: **Git Triage** (selected). Verify npm, Marketplace, Open VSX, GitHub, and USPTO before publishing; use a distinct icon (no orange Git diamond, no GitLab fox).
 
 ---
 

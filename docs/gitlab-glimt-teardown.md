@@ -96,7 +96,7 @@ Scan:
 - issue and merge request templates;
 - wiki pages and snippets.
 
-`repo-trust` implements both patterns and masks the token in output.
+**Git Triage** implements both patterns and masks the token in output.
 
 ---
 

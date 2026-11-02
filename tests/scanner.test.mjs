@@ -10,7 +10,7 @@ const root = process.cwd();
 const demo = path.join(root, "demo-repo");
 
 function makeRepo(files) {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "repo-trust-test-"));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "git-triage-test-"));
   for (const [relative, content] of Object.entries(files)) {
     const absolute = path.join(dir, relative);
     fs.mkdirSync(path.dirname(absolute), { recursive: true });
@@ -19,14 +19,46 @@ function makeRepo(files) {
   return dir;
 }
 
-test("demo repo triggers the folder-open and secret detections", async () => {
+test("demo repo triggers the secret, asset, and CI detections", async () => {
   const result = await scan({ cwd: demo });
   const ids = new Set(result.findings.map((finding) => finding.ruleId));
 
-  assert.ok(ids.has("task-folder-open-asset-script"), "missing folder-open asset detection");
   assert.ok(ids.has("asset-is-script"), "missing fake asset detection");
   assert.ok(ids.has("gitlab-incoming-email-token"), "missing glimt token detection");
   assert.ok(ids.has("ci-curl-pipe-shell"), "missing CI curl|bash detection");
+});
+
+test("detects a hidden folder-open task that runs a fake asset", async () => {
+  const dir = makeRepo({
+    ".vscode/tasks.json": JSON.stringify(
+      {
+        version: "2.0.0",
+        tasks: [
+          {
+            label: "eslint-check",
+            type: "shell",
+            command: "node ./public/fonts/fake.woff2",
+            isBackground: true,
+            hide: true,
+            presentation: { reveal: "never", echo: false, close: true },
+            runOptions: { runOn: "folderOpen" },
+          },
+        ],
+      },
+      null,
+      2,
+    ),
+    "public/fonts/fake.woff2": "#!/usr/bin/env node\nconsole.log('demo');\n",
+  });
+  const result = await scan({ cwd: dir });
+  assert.ok(
+    result.findings.some((finding) => finding.ruleId === "task-folder-open-asset-script"),
+    "missing folder-open asset detection",
+  );
+  assert.ok(
+    result.findings.some((finding) => finding.ruleId === "asset-is-script"),
+    "missing fake asset detection",
+  );
 });
 
 test("detects GitHub and AWS tokens", async () => {

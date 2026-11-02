@@ -2,7 +2,7 @@
 
 ## Reporting a vulnerability
 
-If you find a security issue in `repo-trust`, please do not open a public issue.
+If you find a security issue in `git-triage`, please do not open a public issue.
 
 Email: [your email]
 

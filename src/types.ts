@@ -26,7 +26,7 @@ export interface ScanOptions {
 }
 
 export interface ScanResult {
-  tool: "repo-trust";
+  tool: "git-triage";
   version: string;
   root: string;
   findings: Finding[];
