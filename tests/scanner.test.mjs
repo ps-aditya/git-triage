@@ -26,9 +26,18 @@ test("demo repo triggers the folder-open and secret detections", async () => {
   assert.ok(ids.has("task-folder-open-asset-script"), "missing folder-open asset detection");
   assert.ok(ids.has("asset-is-script"), "missing fake asset detection");
   assert.ok(ids.has("gitlab-incoming-email-token"), "missing glimt token detection");
-  assert.ok(ids.has("github-pat"), "missing GitHub token detection");
-  assert.ok(ids.has("aws-access-key"), "missing AWS key detection");
   assert.ok(ids.has("ci-curl-pipe-shell"), "missing CI curl|bash detection");
+});
+
+test("detects GitHub and AWS tokens", async () => {
+  const dir = makeRepo({
+    "README.md":
+      "github: ghp_DEMO00000000000000000000000000000000\naws: AKIADEMO000000000000\n",
+  });
+  const result = await scan({ cwd: dir });
+  const ids = new Set(result.findings.map((finding) => finding.ruleId));
+  assert.ok(ids.has("github-pat"));
+  assert.ok(ids.has("aws-access-key"));
 });
 
 test("clean repo has no findings", async () => {

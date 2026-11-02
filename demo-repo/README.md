@@ -10,12 +10,10 @@ This repository is a **safe demo** for `repo-trust`. It contains the same shape 
 - `.github/workflows/security-audit.yml` â€” a workflow with a suspicious `curl | bash` string inside an `echo` (not executed).
 - Fake credentials below, used to test the scanner. **They are not valid.**
 
-## Fake credentials (do not use)
+## Fake credential (do not use)
 
 ```text
 GitLab incoming email token: glimt-DEMO000000000000000000000000
-GitHub token:                ghp_DEMO00000000000000000000000000000000
-AWS access key:              AKIADEMO000000000000
 ```
 
 ## Try the scanner
