@@ -53,7 +53,7 @@ The patch is the first step. Revocation is the fix. History cleanup is the clean
 - **17,667 repos** carried the folder-open stealer in October 2026.
 - Cleaning the repo does **not** remove the cron job the payload installs.
 - GitHub's workflow hold does **not** cover `.vscode/tasks.json`; the payload runs on the developer machine.
-- The task runs after Workspace Trust; the scanner warns before you click Trust.
+- The task runs after Workspace Trust. Run the CLI before you open or trust the folder; the VS Code warning is the next piece.
 
 ## Install
 

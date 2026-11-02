@@ -198,7 +198,7 @@ I want to be precise about the limits:
 - **The scanner is a detector, not a sandbox.** It cannot stop a task from running if you ignore the warning and trust the workspace.
 - **It catches known patterns.** A new loader with a different file name or task label may evade it.
 - **False positives happen.** Legitimate projects use `folderOpen` tasks. The scanner explains why it flagged something, and you can ignore it.
-- **Workspace Trust is still the gate.** The scanner warns before the task runs, but it cannot change VS Code's trust model.
+- **Workspace Trust is still the gate.** The scanner can show you the task before you trust the workspace, but it cannot change VS Code's trust model. The in-editor warning is the next piece.
 - **A clean scan is not a guarantee.** It means the checks you ran did not find anything, not that the repo is safe.
 
 The honest framing is: **check the repo, then decide.** The goal is to make the dangerous parts visible before you click Trust.
