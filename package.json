@@ -39,12 +39,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/yourname/git-triage.git"
+    "url": "https://github.com/ps-aditya/git-triage.git"
   },
   "bugs": {
-    "url": "https://github.com/yourname/git-triage/issues"
+    "url": "https://github.com/ps-aditya/git-triage/issues"
   },
-  "homepage": "https://github.com/yourname/git-triage#readme",
+  "homepage": "https://github.com/ps-aditya/git-triage#readme",
   "devDependencies": {
     "@types/node": "^24.0.0",
     "tsup": "^8.0.0",
