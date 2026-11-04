@@ -10,3 +10,5 @@ demo-repo/.vscode/tasks.json
 .env
 *.pem
 *.key
+
+research/
