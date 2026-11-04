@@ -2,6 +2,7 @@
 
 **GitLab patched the CVE. Your leaked token is still valid.**
 
+[![npm](https://img.shields.io/npm/v/git-triage)](https://www.npmjs.com/package/git-triage)
 [![CI](https://github.com/ps-aditya/git-triage/actions/workflows/ci.yml/badge.svg)](https://github.com/ps-aditya/git-triage/actions)
 [![license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![node](https://img.shields.io/badge/node-%3E%3D20-brightgreen)](https://nodejs.org)
@@ -14,7 +15,7 @@ npx git-triage scan .
 
 No account. No telemetry. No secrets leave your machine.
 
-> **Status:** v0.1. The scanner is usable today. The npm package is **not published yet** — use the source install below until it is. Automated revocation, history rewriting, and the VS Code extension are on the roadmap. Everything the tool finds is explained; nothing is changed automatically.
+> **Status:** v0.1. Available on npm. Automated revocation, history rewriting, and the VS Code extension are on the roadmap. Everything the tool finds is explained; nothing is changed automatically.
 
 ---
 
@@ -89,7 +90,33 @@ Read the technical teardown: [GitLab `glimt-` incoming-email token](docs/gitlab-
 
 Requires **Node.js 20 or newer**.
 
-### From source (npm publish pending)
+### From npm (recommended)
+
+```bash
+# one-off scan of the current directory
+npx git-triage scan .
+
+# scan a specific repository
+npx git-triage scan /path/to/repo
+
+# scan the working tree and the last 2,000 commits
+npx git-triage scan . --history --max-commits 2000
+
+# print the remediation runbook
+npx git-triage fix .
+
+# list every detection rule
+npx git-triage rules
+```
+
+Install it globally if you use it often:
+
+```bash
+npm install -g git-triage
+git-triage scan .
+```
+
+### From source (development)
 
 ```bash
 git clone https://github.com/ps-aditya/git-triage.git
@@ -97,34 +124,11 @@ cd git-triage
 npm install
 npm run build
 
-# scan the current directory
+# the same commands, via the local build
 node dist/cli.js scan .
-
-# scan a specific repository
-node dist/cli.js scan /path/to/repo
-
-# scan the working tree and the last 2,000 commits
-node dist/cli.js scan . --history --max-commits 2000
-
-# print the remediation runbook
-node dist/cli.js fix .
-
-# list every detection rule
-node dist/cli.js rules
 ```
 
-### Once published to npm
-
-```bash
-# one-off scan
-npx git-triage scan .
-
-# or install it globally
-npm install -g git-triage
-git-triage scan .
-```
-
-The same commands are used in both cases. The binary is `git-triage`; the npm package is `git-triage`; the product is **Git Triage**.
+The binary is `git-triage`; the npm package is `git-triage`; the product is **Git Triage**.
 
 ---
 
@@ -143,10 +147,8 @@ The task ships as `.example` so antivirus does not quarantine it and VS Code doe
 cd demo-repo
 pwsh ./enable-demo.ps1
 cd ..
-node dist/cli.js scan demo-repo
+npx git-triage scan demo-repo
 ```
-
-Once the npm package is published, `npx git-triage scan demo-repo` is equivalent.
 
 Expected highlights:
 
