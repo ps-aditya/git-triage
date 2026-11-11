@@ -1,0 +1,37 @@
+name: Publish Open VSX
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: vscode-extension/package-lock.json
+      - name: Install
+        working-directory: vscode-extension
+        run: npm ci
+      - name: Package VSIX
+        working-directory: vscode-extension
+        run: npm run package
+      - name: Check Open VSX token
+        env:
+          OVSX_PAT: ${{ secrets.OVSX_PAT }}
+        run: |
+          if [ -z "$OVSX_PAT" ]; then
+            echo "Missing OVSX_PAT repository secret."
+            exit 1
+          fi
+      - name: Publish
+        working-directory: vscode-extension
+        env:
+          OVSX_PAT: ${{ secrets.OVSX_PAT }}
+        run: npx ovsx publish git-triage-vscode.vsix -p "$OVSX_PAT"

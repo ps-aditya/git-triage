@@ -151,8 +151,10 @@ The extension bundles the published `git-triage` scanner. The source lives in [`
 
 ```bash
 npm run package
-npx ovsx publish git-triage-vscode.vsix -p "$OVSX_TOKEN"
+npx ovsx publish git-triage-vscode.vsix -p "$OVSX_PAT"
 ```
+
+Create the `ps-aditya` publisher namespace and a personal access token at <https://open-vsx.org>. In GitHub Actions, add `OVSX_PAT` as a repository secret and run the **Publish Open VSX** workflow, or run the command above locally.
 
 ---
 
