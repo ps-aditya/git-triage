@@ -1,33 +1,33 @@
 import * as path from "node:path";
 import * as vscode from "vscode";
 import type { Finding } from "git-triage";
-import { getConfig } from "./config.js";
+import { getConfig, getWorkspaceRoot } from "./config.js";
+import { DashboardProvider } from "./dashboardProvider.js";
 import { DiagnosticsManager } from "./diagnostics.js";
 import { FindingsProvider } from "./findingsProvider.js";
 import { openRunbook } from "./runbook.js";
 import { ScanController } from "./scanController.js";
 import { StatusBar } from "./statusBar.js";
-import { SummaryProvider } from "./summaryProvider.js";
 import { TaskWarner } from "./taskWarning.js";
 
 export function activate(context: vscode.ExtensionContext): void {
   const output = vscode.window.createOutputChannel("Git Triage");
   output.appendLine(`[${new Date().toISOString()}] Git Triage activated (v${context.extension.packageJSON.version})`);
   console.log("[git-triage] activated");
+
   const diagnostics = new DiagnosticsManager();
   const findings = new FindingsProvider();
-  const summary = new SummaryProvider();
   const status = new StatusBar();
   const taskWarner = new TaskWarner(context);
-  const controller = new ScanController(output, diagnostics, findings, summary, status, taskWarner);
+  const controller = new ScanController(output, diagnostics, findings, status, taskWarner);
+  const dashboard = new DashboardProvider(context.extensionUri, output, controller);
 
   const findingsView = vscode.window.createTreeView("gitTriage.findings", {
     treeDataProvider: findings,
     showCollapseAll: true,
   });
-  const summaryView = vscode.window.createTreeView("gitTriage.summary", {
-    treeDataProvider: summary,
-    showCollapseAll: false,
+  const dashboardView = vscode.window.registerWebviewViewProvider("gitTriage.dashboard", dashboard, {
+    webviewOptions: { retainContextWhenHidden: true },
   });
 
   context.subscriptions.push(
@@ -35,9 +35,9 @@ export function activate(context: vscode.ExtensionContext): void {
     diagnostics,
     status,
     findingsView,
-    summaryView,
+    dashboardView,
+    dashboard,
     findings,
-    summary,
   );
 
   context.subscriptions.push(
@@ -46,6 +46,43 @@ export function activate(context: vscode.ExtensionContext): void {
     }),
     vscode.commands.registerCommand("gitTriage.scanHistory", () => {
       void controller.scan({ history: true, manual: true });
+    }),
+    vscode.commands.registerCommand("gitTriage.refresh", () => {
+      void dashboard.refresh();
+    }),
+    vscode.commands.registerCommand("gitTriage.commit", () => {
+      void dashboard.promptCommit();
+    }),
+    vscode.commands.registerCommand("gitTriage.fetch", () => {
+      void dashboard.runGitAction("fetch");
+    }),
+    vscode.commands.registerCommand("gitTriage.pull", () => {
+      void dashboard.runGitAction("pull");
+    }),
+    vscode.commands.registerCommand("gitTriage.push", () => {
+      void dashboard.runGitAction("push");
+    }),
+    vscode.commands.registerCommand("gitTriage.checkout", () => {
+      void dashboard.promptCheckout();
+    }),
+    vscode.commands.registerCommand("gitTriage.createBranch", () => {
+      void dashboard.promptCreateBranch();
+    }),
+    vscode.commands.registerCommand("gitTriage.init", () => {
+      void dashboard.initRepository();
+    }),
+    vscode.commands.registerCommand("gitTriage.openTerminal", () => {
+      const terminal = vscode.window.createTerminal({
+        name: "Git Triage",
+        cwd: getWorkspaceRoot(),
+      });
+      terminal.show();
+    }),
+    vscode.commands.registerCommand("gitTriage.openGitBash", () => {
+      void dashboard.openGitBash();
+    }),
+    vscode.commands.registerCommand("gitTriage.showDashboard", () => {
+      void vscode.commands.executeCommand("gitTriage.dashboard.focus");
     }),
     vscode.commands.registerCommand("gitTriage.showRunbook", async () => {
       const result = controller.getResult() ?? (await controller.scan({ manual: true }));
@@ -82,19 +119,27 @@ export function activate(context: vscode.ExtensionContext): void {
   context.subscriptions.push(
     vscode.workspace.onDidChangeWorkspaceFolders(() => {
       void controller.scan();
+      void dashboard.refresh();
     }),
     vscode.workspace.onDidGrantWorkspaceTrust(() => {
       void controller.scan();
+      void dashboard.refresh();
     }),
     vscode.workspace.onDidChangeConfiguration((event) => {
       if (event.affectsConfiguration("gitTriage")) {
         output.appendLine(`[${new Date().toISOString()}] configuration changed`);
+        void dashboard.refresh();
       }
     }),
   );
 
   if (getConfig().scanOnOpen) {
     void controller.scan();
+  }
+  if (getConfig().openDashboardOnStartup) {
+    setTimeout(() => {
+      void vscode.commands.executeCommand("gitTriage.dashboard.focus");
+    }, 750);
   }
 }
 

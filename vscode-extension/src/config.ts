@@ -6,6 +6,9 @@ export interface GitTriageConfig {
   maxCommits: number;
   showProblems: boolean;
   warnOnFolderOpen: boolean;
+  pollInterval: number;
+  logLimit: number;
+  openDashboardOnStartup: boolean;
 }
 
 export function getConfig(): GitTriageConfig {
@@ -16,6 +19,9 @@ export function getConfig(): GitTriageConfig {
     maxCommits: config.get<number>("maxCommits", 500),
     showProblems: config.get<boolean>("showProblems", true),
     warnOnFolderOpen: config.get<boolean>("warnOnFolderOpen", true),
+    pollInterval: config.get<number>("pollInterval", 3000),
+    logLimit: config.get<number>("logLimit", 20),
+    openDashboardOnStartup: config.get<boolean>("openDashboardOnStartup", false),
   };
 }
 

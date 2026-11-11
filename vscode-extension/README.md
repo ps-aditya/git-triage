@@ -39,6 +39,21 @@ Read the launch analysis: [GitLab patched the CVE. Your leaked token is still va
 
 ---
 
+## Dashboard
+
+The activity bar opens a single **Git Triage** dashboard, styled after Redis State Explorer. It has five tabs:
+
+- **Overview** — current branch, ahead/behind, staged/unstaged/untracked counts, latest commit, remotes, quick actions, and triage summary.
+- **Changes** — every changed file with status, stage/unstage/diff actions, bulk stage/unstage, and a commit box.
+- **Branches** — local branches with upstream and subject, checkout, and create-and-switch.
+- **History** — recent commits with author, relative time, and a commit view.
+- **Triage** — severity cards, findings, scan/scan-history, and the fix runbook.
+- **Commands** — a searchable Git command helper with syntax, examples, copy/run actions, and a **git console** that executes `git` commands in the workspace. Includes an **Open Git Bash** button for interactive commands.
+
+The **Findings** tree remains available below the dashboard, and file/line findings are also published to the Problems panel.
+
+---
+
 ## Install
 
 Search for **Git Triage** in the Extensions view of VS Code, VSCodium, Cursor, or any Open VSX-based editor, or install from the command line:
@@ -59,6 +74,17 @@ cursor --install-extension ps-aditya.git-triage
 
 | Command | What it does |
 |---|---|
+| **Git Triage: Open Dashboard** | Focus the Git Triage dashboard. |
+| **Git Triage: Refresh** | Refresh status, changes, branches, history, and remotes. |
+| **Git Triage: Commit…** | Prompt for a message and commit staged changes. |
+| **Git Triage: Fetch** | Fetch all remotes and prune. |
+| **Git Triage: Pull** | Pull the current branch. |
+| **Git Triage: Push** | Push the current branch. |
+| **Git Triage: Checkout Branch…** | Pick a local branch to check out. |
+| **Git Triage: Create Branch…** | Create and switch to a new branch. |
+| **Git Triage: Initialize Repository** | Run `git init` in the workspace. |
+| **Git Triage: Open Terminal** | Open a terminal at the workspace root. |
+| **Git Triage: Open Git Bash** | Open Git Bash at the workspace root (falls back to the default shell). |
 | **Git Triage: Scan Workspace** | Scan the working tree. |
 | **Git Triage: Scan Workspace + History** | Scan the working tree and up to 500 commits. |
 | **Git Triage: Show Fix Runbook** | Open the remediation checklist as Markdown. |
@@ -66,7 +92,7 @@ cursor --install-extension ps-aditya.git-triage
 | **Git Triage: Show Output** | Show the redacted scan log. |
 | **Git Triage: Reload in Restricted Mode** | Explain how to reload without trusting the workspace. |
 
-The extension also adds a **Git Triage** activity bar view with **Findings** and **Scan Summary**.
+The extension adds a **Git Triage** activity bar view with the **Dashboard** and **Findings** views.
 
 ---
 
@@ -79,6 +105,9 @@ The extension also adds a **Git Triage** activity bar view with **Findings** and
 | `gitTriage.maxCommits` | `500` | Maximum commits to scan when history is enabled. |
 | `gitTriage.showProblems` | `true` | Publish findings to the Problems panel. |
 | `gitTriage.warnOnFolderOpen` | `true` | Warn when a hidden folder-open task or fake asset is found. |
+| `gitTriage.pollInterval` | `3000` | Dashboard refresh interval while visible, in milliseconds. |
+| `gitTriage.logLimit` | `20` | Number of recent commits in the History tab. |
+| `gitTriage.openDashboardOnStartup` | `false` | Focus the dashboard when the extension activates. |
 
 ---
 
@@ -130,6 +159,8 @@ The extension also adds a **Git Triage** activity bar view with **Findings** and
 - **Pattern-based:** a new loader with a different file name or task label may evade detection.
 - **Single root:** v0.1 scans the first workspace folder. Multi-root support is on the roadmap.
 - **Workspace Trust:** the folder-open task only executes after the workspace is trusted. The extension warns, but it cannot change VS Code's trust model.
+- **Restricted git console:** the Commands tab only runs `git` commands, one at a time. Shell pipes, redirects, chaining, and non-`git` programs are rejected. Interactive commands (`git add -p`, `git rebase -i`, `git mergetool`, a `git commit` without `-m`, …) are routed to **Open Git Bash**.
+- **Destructive commands ask first:** hard resets, forced cleans, force-pushes, branch deletes, restores, stash drops, and history rewrites require a modal confirmation before they run.
 
 If you open an untrusted repository, review the findings before clicking **Trust**. If you already trusted a malicious repo, treat the credentials on that machine as exposed and rotate them from a clean machine.
 
@@ -141,6 +172,7 @@ If you open an untrusted repository, review the findings before clicking **Trust
 cd vscode-extension
 npm install
 npm run typecheck
+npm run test:dashboard
 npm run build
 npm run package
 ```

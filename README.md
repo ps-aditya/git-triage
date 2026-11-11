@@ -90,9 +90,10 @@ Read the technical teardown: [GitLab `glimt-` incoming-email token](docs/gitlab-
 
 The extension lives in [`vscode-extension/`](vscode-extension). It wraps the same scanner and adds:
 
-- a **Git Triage** activity bar view with findings grouped by severity
+- a **Git Triage** activity bar dashboard with **Overview**, **Changes**, **Branches**, **History**, **Triage**, and **Commands** tabs
+- Git status, ahead/behind, staging, commit, branch checkout/create, history, remotes, fetch/pull/push, and `git init`
+- a Git command helper with syntax, examples, copy/run actions, a `git` console, and an **Open Git Bash** launcher
 - Problems panel diagnostics for file and line findings
-- a scan summary (files, commits, counts)
 - a modal warning for hidden `folderOpen` tasks and fake assets
 - a Markdown **fix runbook**
 

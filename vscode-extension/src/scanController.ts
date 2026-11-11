@@ -7,7 +7,6 @@ import {
 } from "./config.js";
 import { DiagnosticsManager } from "./diagnostics.js";
 import { FindingsProvider } from "./findingsProvider.js";
-import { SummaryProvider } from "./summaryProvider.js";
 import { StatusBar } from "./statusBar.js";
 import { TaskWarner } from "./taskWarning.js";
 
@@ -20,7 +19,6 @@ export class ScanController {
     private readonly output: vscode.OutputChannel,
     private readonly diagnostics: DiagnosticsManager,
     private readonly findings: FindingsProvider,
-    private readonly summary: SummaryProvider,
     private readonly status: StatusBar,
     private readonly taskWarner: TaskWarner,
   ) {}
@@ -33,7 +31,7 @@ export class ScanController {
     return this.result?.root ?? getWorkspaceRoot();
   }
 
-  async scan(options: { history?: boolean; manual?: boolean } = {}): Promise<ScanResult | undefined> {
+  async scan(options: { history?: boolean; manual?: boolean; silent?: boolean } = {}): Promise<ScanResult | undefined> {
     const root = getWorkspaceRoot();
     if (!root) {
       void vscode.window.showInformationMessage("Git Triage: open a folder before scanning.");
@@ -82,7 +80,6 @@ export class ScanController {
       }
 
       this.findings.setResult(result);
-      this.summary.setResult(result);
       this.status.setResult(result);
 
       const counts = {
@@ -104,7 +101,7 @@ export class ScanController {
 
       await this.taskWarner.maybeWarn(result);
 
-      if (options.manual) {
+      if (options.manual && !options.silent) {
         if (result.findings.length === 0) {
           void vscode.window.showInformationMessage(
             `Git Triage: no findings in ${result.scanned.files} files.`,

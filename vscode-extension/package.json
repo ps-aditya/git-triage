@@ -1,7 +1,7 @@
 {
   "name": "git-triage",
   "displayName": "Git Triage",
-  "description": "Find leaked GitLab credentials and malicious VS Code folder-open tasks before they spread.",
+  "description": "Git status, changes, branches, history, and credential triage in one VS Code sidebar.",
   "version": "0.1.0",
   "publisher": "ps-aditya",
   "license": "MIT",
@@ -50,12 +50,14 @@
     "views": {
       "gitTriage": [
         {
-          "id": "gitTriage.findings",
-          "name": "Findings"
+          "id": "gitTriage.dashboard",
+          "name": "Dashboard",
+          "type": "webview",
+          "visibility": "visible"
         },
         {
-          "id": "gitTriage.summary",
-          "name": "Scan Summary"
+          "id": "gitTriage.findings",
+          "name": "Findings"
         }
       ]
     },
@@ -69,6 +71,61 @@
         "command": "gitTriage.scanHistory",
         "title": "Git Triage: Scan Workspace + History",
         "icon": "$(history)"
+      },
+      {
+        "command": "gitTriage.refresh",
+        "title": "Git Triage: Refresh",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "gitTriage.commit",
+        "title": "Git Triage: Commit…",
+        "icon": "$(check)"
+      },
+      {
+        "command": "gitTriage.fetch",
+        "title": "Git Triage: Fetch",
+        "icon": "$(cloud-download)"
+      },
+      {
+        "command": "gitTriage.pull",
+        "title": "Git Triage: Pull",
+        "icon": "$(arrow-down)"
+      },
+      {
+        "command": "gitTriage.push",
+        "title": "Git Triage: Push",
+        "icon": "$(arrow-up)"
+      },
+      {
+        "command": "gitTriage.checkout",
+        "title": "Git Triage: Checkout Branch…",
+        "icon": "$(git-branch)"
+      },
+      {
+        "command": "gitTriage.createBranch",
+        "title": "Git Triage: Create Branch…",
+        "icon": "$(add)"
+      },
+      {
+        "command": "gitTriage.init",
+        "title": "Git Triage: Initialize Repository",
+        "icon": "$(repo)"
+      },
+      {
+        "command": "gitTriage.openTerminal",
+        "title": "Git Triage: Open Terminal",
+        "icon": "$(terminal)"
+      },
+      {
+        "command": "gitTriage.openGitBash",
+        "title": "Git Triage: Open Git Bash",
+        "icon": "$(terminal-bash)"
+      },
+      {
+        "command": "gitTriage.showDashboard",
+        "title": "Git Triage: Open Dashboard",
+        "icon": "$(dashboard)"
       },
       {
         "command": "gitTriage.showRunbook",
@@ -99,6 +156,21 @@
     ],
     "menus": {
       "view/title": [
+        {
+          "command": "gitTriage.refresh",
+          "when": "view == gitTriage.dashboard",
+          "group": "navigation@1"
+        },
+        {
+          "command": "gitTriage.scan",
+          "when": "view == gitTriage.dashboard",
+          "group": "navigation@2"
+        },
+        {
+          "command": "gitTriage.showRunbook",
+          "when": "view == gitTriage.dashboard",
+          "group": "navigation@3"
+        },
         {
           "command": "gitTriage.scan",
           "when": "view == gitTriage.findings",
@@ -154,6 +226,24 @@
           "type": "boolean",
           "default": true,
           "description": "Show a warning when the workspace contains a hidden folder-open task or a script disguised as an asset."
+        },
+        "gitTriage.pollInterval": {
+          "type": "number",
+          "default": 3000,
+          "minimum": 1000,
+          "description": "How often the dashboard refreshes Git state while it is visible, in milliseconds."
+        },
+        "gitTriage.logLimit": {
+          "type": "number",
+          "default": 20,
+          "minimum": 1,
+          "maximum": 100,
+          "description": "Number of recent commits to show in the History tab."
+        },
+        "gitTriage.openDashboardOnStartup": {
+          "type": "boolean",
+          "default": false,
+          "description": "Focus the Git Triage dashboard when the extension activates."
         }
       }
     }
@@ -170,6 +260,7 @@
     "build": "esbuild src/extension.ts --bundle --external:vscode --format=cjs --platform=node --target=node20 --outfile=dist/extension.js --sourcemap",
     "watch": "npm run build -- --watch",
     "typecheck": "tsc --noEmit",
+    "test:dashboard": "node smoke-dashboard.mjs",
     "package": "npm run build && npx @vscode/vsce package --no-dependencies --out git-triage-vscode.vsix",
     "publish:ovsx": "npx ovsx publish git-triage-vscode.vsix"
   },
@@ -180,6 +271,7 @@
     "@types/node": "^24.0.0",
     "@types/vscode": "^1.96.0",
     "esbuild": "^0.25.0",
+    "jsdom": "^31.0.0",
     "typescript": "^5.6.0"
   }
 }

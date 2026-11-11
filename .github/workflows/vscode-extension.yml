@@ -26,6 +26,9 @@ jobs:
       - name: Typecheck
         working-directory: vscode-extension
         run: npm run typecheck
+      - name: Dashboard smoke test
+        working-directory: vscode-extension
+        run: npm run test:dashboard
       - name: Package VSIX
         working-directory: vscode-extension
         run: npm run package
