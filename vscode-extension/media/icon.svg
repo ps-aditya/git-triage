@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Git Triage">
+  <rect width="128" height="128" rx="24" fill="#0f172a"/>
+  <path d="M64 14 L106 31 V63 C106 87 88 105 64 114 C40 105 22 87 22 63 V31 Z" fill="#38bdf8"/>
+  <path d="M64 28 L93 40 V63 C93 80 80 93 64 100 C48 93 35 80 35 63 V40 Z" fill="#0f172a"/>
+  <path d="M50 64 L60 74 L79 53" stroke="#38bdf8" stroke-width="8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

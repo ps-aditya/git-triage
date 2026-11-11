@@ -86,6 +86,27 @@ Read the technical teardown: [GitLab `glimt-` incoming-email token](docs/gitlab-
 
 ---
 
+## VS Code extension
+
+The extension lives in [`vscode-extension/`](vscode-extension). It wraps the same scanner and adds:
+
+- a **Git Triage** activity bar view with findings grouped by severity
+- Problems panel diagnostics for file and line findings
+- a scan summary (files, commits, counts)
+- a modal warning for hidden `folderOpen` tasks and fake assets
+- a Markdown **fix runbook**
+
+Build and install the VSIX:
+
+```bash
+cd vscode-extension
+npm install
+npm run package
+code --install-extension git-triage-vscode.vsix
+```
+
+Open VSX listing: `ps-aditya.git-triage` (publish pending).
+
 ## Quick start
 
 Requires **Node.js 20 or newer**.
