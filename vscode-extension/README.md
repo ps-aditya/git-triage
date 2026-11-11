@@ -177,6 +177,8 @@ npm run build
 npm run package
 ```
 
+Node.js 22.22+ or 24 is required for the jsdom-based dashboard smoke test.
+
 The extension bundles the published `git-triage` scanner. The source lives in [`ps-aditya/git-triage`](https://github.com/ps-aditya/git-triage).
 
 ### Package and publish
