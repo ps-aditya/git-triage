@@ -43,7 +43,7 @@
         {
           "id": "gitTriage",
           "title": "Git Triage",
-          "icon": "media/icon.svg"
+          "icon": "media/sidebar.svg"
         }
       ]
     },
