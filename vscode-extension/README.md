@@ -4,7 +4,7 @@
 
 Git Triage is a free, local-first VS Code extension for the 2026 GitLab credential leaks and the VS Code folder-open malware wave. It finds leaked GitLab credentials and hidden folder-open tasks, publishes them to the Problems panel and a dedicated view, and gives you a revoke → rotate → purge → verify runbook.
 
-> This extension wraps the open-source [`git-triage`](https://www.npmjs.com/package/git-triage) scanner. It reads workspace files locally. No account, no telemetry, no network calls.
+> This extension wraps the open-source [`git-triage`](https://www.npmjs.com/package/git-triage) scanner. It reads workspace files locally. No account, no telemetry, and no scanner network calls. Git fetch/pull/push only contact your remotes when you run them.
 
 ---
 
@@ -30,7 +30,7 @@ Read the launch analysis: [GitLab patched the CVE. Your leaked token is still va
 - **Find other leaked credentials**: GitHub PATs, AWS access keys, npm tokens, OpenAI/Anthropic keys, SSH private keys.
 - **Catch the folder-open malware pattern**: hidden `.vscode/tasks.json` tasks with `runOn: folderOpen`, fake fonts/images that are scripts, malicious Git hooks, dangerous `.git/config`, submodule commands, and CI exfiltration patterns.
 - **Problems panel integration**: every finding with a file and line becomes a diagnostic.
-- **Git Triage sidebar**: findings grouped by severity, plus a scan summary.
+- **Git Triage sidebar**: a dashboard plus findings grouped by severity and the fix runbook.
 - **Folder-open warning**: a modal warning when the workspace contains a hidden task that runs a script disguised as an asset.
 - **Fix runbook**: a Markdown checklist for revoke → rotate → purge → verify.
 - **History scan**: optionally scan every commit with `git log -p`.
@@ -41,7 +41,7 @@ Read the launch analysis: [GitLab patched the CVE. Your leaked token is still va
 
 ## Dashboard
 
-The activity bar opens a single **Git Triage** dashboard, styled after Redis State Explorer. It has five tabs:
+The activity bar opens a single **Git Triage** dashboard. It has six tabs:
 
 - **Overview** — current branch, ahead/behind, staged/unstaged/untracked counts, latest commit, remotes, quick actions, and triage summary.
 - **Changes** — every changed file with status, stage/unstage/diff actions, bulk stage/unstage, and a commit box.
@@ -56,16 +56,17 @@ The **Findings** tree remains available below the dashboard, and file/line findi
 
 ## Install
 
-Search for **Git Triage** in the Extensions view of VS Code, VSCodium, Cursor, or any Open VSX-based editor, or install from the command line:
+Search for **Git Triage** in the VS Code Marketplace, or install from the command line:
 
 ```bash
 code --install-extension ps-aditya.git-triage
 ```
 
-For Open VSX editors:
+On Open VSX-based editors (VSCodium, Cursor, and others):
 
 ```bash
-cursor --install-extension ps-aditya.git-triage
+ovsx install ps-aditya.git-triage
+# or use the Extensions view in your editor
 ```
 
 ---
@@ -153,7 +154,7 @@ The extension adds a **Git Triage** activity bar view with the **Dashboard** and
 ## Safety and limitations
 
 - **Local-first:** the extension reads workspace files and prints findings. It does not upload code or telemetry.
-- **No code execution:** it does not run repository tasks, scripts, hooks, or tests.
+- **No automatic execution:** scanning never runs repository tasks, scripts, hooks, or tests. Git actions you explicitly trigger run the `git` CLI in the workspace, so your configured Git hooks may run as usual.
 - **Detector, not sandbox:** it cannot stop a task from running if you trust the workspace and ignore the warning.
 - **Not automatic:** v0.1 finds and guides. It does not revoke credentials, rotate them, or rewrite history.
 - **Pattern-based:** a new loader with a different file name or task label may evade detection.
@@ -185,10 +186,11 @@ The extension bundles the published `git-triage` scanner. The source lives in [`
 
 ```bash
 npm run package
-npx ovsx publish git-triage-vscode.vsix -p "$OVSX_PAT"
+npx @vscode/vsce publish git-triage-vscode.vsix -p "$VSCE_PAT"   # VS Code Marketplace
+npx ovsx publish git-triage-vscode.vsix -p "$OVSX_PAT"           # Open VSX
 ```
 
-Create the `ps-aditya` publisher namespace and a personal access token at <https://open-vsx.org>. In GitHub Actions, add `OVSX_PAT` as a repository secret and run the **Publish Open VSX** workflow, or run the command above locally.
+For the VS Code Marketplace, create the `ps-aditya` publisher at <https://marketplace.visualstudio.com/manage> and an Azure DevOps personal access token with **Marketplace → Manage** scope. For Open VSX, create the `ps-aditya` namespace and a token at <https://open-vsx.org>. In GitHub Actions, add `VSCE_PAT` / `OVSX_PAT` as repository secrets and run the corresponding publish workflow, or run the commands above locally.
 
 ---
 

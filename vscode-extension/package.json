@@ -10,9 +10,13 @@
     "vscode": "^1.96.0"
   },
   "categories": [
-    "Security",
+    "SCM Providers",
     "Other"
   ],
+  "galleryBanner": {
+    "color": "#1b1b1f",
+    "theme": "dark"
+  },
   "keywords": [
     "gitlab",
     "security",
