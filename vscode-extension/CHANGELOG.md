@@ -8,7 +8,7 @@
 - Redis Live-style webview dashboard with Overview, Changes, Branches, History, Triage, and Commands tabs.
 - Scan the working tree for leaked GitLab credentials, GitHub/AWS/npm/AI/SSH secrets, hidden folder-open tasks, fake assets, Git hooks, dangerous Git config, submodule commands, and CI exfiltration patterns.
 - Problems panel integration, Git Triage sidebar dashboard, status bar, and folder-open warning.
-- An orange diamond extension icon and a matching monochrome activity bar glyph.
+- An emerald diamond extension icon with an amber tag, plus a matching monochrome activity bar glyph.
 - Markdown fix runbook covering revoke → rotate → purge → verify.
 - Optional git history scan.
 - Local-first, no telemetry, masked output.
